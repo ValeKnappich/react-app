@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import ValesMiniGame from './ValesMiniGame'
 import './App.css';
 import '../node_modules/grommet-css';
