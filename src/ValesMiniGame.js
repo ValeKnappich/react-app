@@ -27,6 +27,14 @@ export class ValesMiniGame extends Component {
             </div>
         );
     }
+    componentDidMount(){
+        if(this.props.parent.store.vale.scoreboard_entries !== null) {
+            this.scoreboard.current.setState({entries: this.props.parent.store.vale.scoreboard_entries});
+        }
+    }
+    componentWillUnmount(){
+        this.props.parent.store.vale.scoreboard_entries = this.scoreboard.current.state.entries;
+    }
     increaseCounter(){
         this.setState((state) => {
             return {count: state.count + 1}
@@ -66,9 +74,7 @@ export class ValesMiniGame extends Component {
             }
         }
         //Reset counter
-        this.setState((state) => {
-            return {count: 0}
-        });
+        this.setState({count: 0});
         //Reset Button
         document.getElementById('startButton').disabled = false;
         this.controlPanel.current.setState({buttonText: "Start Game!"});
@@ -149,7 +155,7 @@ class Field extends Component{
 }
 
 class Tile extends Component {
-    constructor(props){
+    constructor(){
         super();
         this.setActive = this.setActive.bind(this);
     }
@@ -171,7 +177,6 @@ class Tile extends Component {
                 active.classList.remove('activeTile');
                 tiles[i].classList.add("activeTile");
                 tiles[i].setAttribute('background',"url('" + images[Math.round(Math.random())] + "') no-repeat !important");
-                console.log("url('" + images[Math.round(Math.random())] + "') no-repeat !important");
                 this.props.increaseCounter();
             }catch(e){}
         }
@@ -212,18 +217,17 @@ class Scoreboard extends Component{
         this.addEntry({name: "P3", score: 3*rndm});
     }
     addHtml(entry, key){
-        console.log(this.state.entries);
         return <TableRow key={key}><td>{entry.name}</td><td>{entry.score}</td></TableRow>;
     }
     addEntry(entry){
-        let tmp_entries = this.state.entries;
+        console.log("add entry");
+        let tmp_entries = this.state.entries == null ? [] : this.state.entries;
         tmp_entries.push({name: entry.name, score: entry.score});
         this.sort();
         this.setState({entries: tmp_entries});
     }
     sort(){
-        console.log("sorting");
-        let tmp_entries = this.state.entries;
+        let tmp_entries = this.state.entries == null ? [] : this.state.entries;
         tmp_entries.sort(this.entryComparator);
         this.setState({entries: tmp_entries});
     }

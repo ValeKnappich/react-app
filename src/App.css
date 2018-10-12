@@ -16,8 +16,7 @@
   align-items: center;
 
   min-width: 180px;
-  min-height: 80vh;
-  height: fit-content;
+  height: 80vh;
   padding: 5px;
 
   border: 2px solid black;
@@ -57,6 +56,7 @@
 }
 /*Scoreboard stuff*/
 .Scoreboard{
+    font-size: 2.5vh;
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -69,7 +69,7 @@
 
     border: 2px solid black;
     border-radius: 10px;
-
+    overflow: hidden;
 }
 .Scoreboard tbody, thead{
     display: block;
@@ -99,8 +99,8 @@
     background-size: cover !important;*/
 }
 .Tile {
-  height: 100px;
-  width: 100px;
+  height: 8vw;
+  width: 8vw;
   display: inline-block;
   border: 3px solid black;
   background: blue;
@@ -110,10 +110,10 @@
 }
 
 @media (max-width: 1071px) {
-    .Tile{
+    /*.Tile{
         height: 70px;
         width: 70px;
-    }
+    }*/
     .Scoreboard{
         min-width: 100px;
         min-height: 60vh;
@@ -124,10 +124,10 @@
     }
 }
 @media (max-width: 850px) {
-    .Tile{
+    /*.Tile{
         height: 50px;
         width: 50px;
-    }
+    }*/
     .Scoreboard{
         min-width: 80px;
         min-height: 50vh;
