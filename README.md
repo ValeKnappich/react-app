@@ -31,6 +31,7 @@ class Elternklasse extends Component{
   render(){
     return (
       <meinKind ich={this} /> //Verweis auf die Elternkomponente
+      //ODER
       <meinKind meineMethode={this.meineMethode} /> //Verweis auf eine Methode der Elternklasse
     );
   }
