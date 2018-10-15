@@ -13,7 +13,7 @@ Zugriff von Komponenten von anderen Komponenten aus:
 
 Zugriff auf Kinder von der Elternklasse:   (using ref's)
 
-
+```javascript
 class Elternklasse extends Component{
   constructor(){
     this.meinKind = React.createRef();
@@ -22,10 +22,11 @@ class Elternklasse extends Component{
     this.meinKind.current.methodeImKind();
   }
 }
+```
 
 Zugriff auf Eltern von Kind aus:
 
-
+```javascript
 class Elternklasse extends Component{
   render(){
     return (
@@ -39,6 +40,7 @@ class Kinderklasse extends Component{
      this.props.meineMethode();    //Zugriff via this.props.NAME_DES_CUSTOM_ATTRIBUTS
   }
 }
+``
 Bewertungskriterien:
 
 Programmcode		20%
