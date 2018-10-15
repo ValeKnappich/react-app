@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import ValesMiniGame from './ValesMiniGame'
-import './App.css';
+import ValesMiniGame from './Vale/ValesMiniGame'
+import './Vale/App.css';
 import '../node_modules/grommet-css';
 import {Tabs, Tab} from 'grommet';
 
 class App extends Component {
+    constructor(){
+        super();
+        this.store = {vale: {scoreboard_entries: null}};
+    }
     render() {
         return (
-            <Tabs>
+            <Tabs style={{borderBottom: '1px solid black'}}>
                 <Tab title="Vale">
-                    <ValesMiniGame/>
+                    <ValesMiniGame parent={this}/>
                 </Tab>
                 <Tab title="Markus">
 

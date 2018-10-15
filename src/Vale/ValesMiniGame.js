@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 //Components
 import {Table, TableRow, TableHeader} from 'grommet';
-import '../node_modules/grommet-css';
+import '../../node_modules/grommet-css';
 
 const settings = {dimension: 6};
 
@@ -22,24 +22,31 @@ export class ValesMiniGame extends Component {
         return (
             <div className="App">
                 <ControlPanel app={this} ref={this.controlPanel} startGame={this.startGame} count={this.state.count} />
-                <Field increaseCounter={this.increaseCounter}/>
-                <Scoreboard ref={this.scoreboard}/>
+                <div className="MainView">
+                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                        <Field increaseCounter={this.increaseCounter}/>
+                    </div>
+                    <Scoreboard ref={this.scoreboard}/>
+                </div>
             </div>
         );
     }
+    componentDidMount(){
+        if(this.props.parent.store.vale.scoreboard_entries !== null) {
+            this.scoreboard.current.setState({entries: this.props.parent.store.vale.scoreboard_entries});
+        }
+    }
+    componentWillUnmount(){
+        this.props.parent.store.vale.scoreboard_entries = this.scoreboard.current.state.entries;
+    }
     increaseCounter(){
-        this.setState((state) => {
-            return {count: state.count + 1}
-        });
+        this.setState({count: this.state.count+1});
     }
     startGame(){
-        //ControlPanel
         this.controlPanel.current.countDown.current.start();
-        //Game Logic
         let i = Math.floor(Math.random() * 8);
         let tiles = document.getElementsByClassName("Tile");
         tiles[i].classList.add("activeTile");
-        //Reactivate Tiles if 2nd round
         for(let i=0;i<settings.dimension*settings.dimension; i++){
             tiles[i].disabled = false;
         }
@@ -53,8 +60,8 @@ export class ValesMiniGame extends Component {
         let entered_name = prompt("You reached "+this.state.count+" Points!\nEnter your Name to save your Score!");
         if(entered_name === "" || entered_name === null){
             entered_name = "Unnamed";
-            this.scoreboard.current.addEntry({name: entered_name, score: this.state.count});
         }
+        this.scoreboard.current.addEntry({name: entered_name, score: this.state.count});
         this.reset();
     }
     reset(){
@@ -66,9 +73,7 @@ export class ValesMiniGame extends Component {
             }
         }
         //Reset counter
-        this.setState((state) => {
-            return {count: 0}
-        });
+        this.setState({count: 0});
         //Reset Button
         document.getElementById('startButton').disabled = false;
         this.controlPanel.current.setState({buttonText: "Start Game!"});
@@ -87,9 +92,9 @@ class ControlPanel extends Component{
     render(){
         return(
             <div className="ControlPanel">
-                <input type="button" id="startButton" onClick={this.setRunning} value={this.state.buttonText} />
-                <div className="counterContainer"><p className="headline">Time</p><Countdown ref={this.countDown} className="Countdown" time={10} onComplete={this.props.app.gameEnd}/></div>
-                <div className="counterContainer"><p className="headline">Points</p><Counter count={this.props.count} /></div>
+                <input type="button" id="startButton" className="ControlPanelChild button important" onClick={this.setRunning} value={this.state.buttonText} />
+                <div className="ControlPanelChild"><p className="headline">Time<Countdown ref={this.countDown} time={10} onComplete={this.props.app.gameEnd}/></p></div>
+                <div className="ControlPanelChild"><p className="headline">Points<Counter count={this.props.count} /></p></div>
             </div>
         );
     }
@@ -116,7 +121,7 @@ class ControlPanel extends Component{
 class Counter extends Component{
     render(){
         return(
-            <span id="counter" >{this.props.count}</span>
+            <span id="counter" style={{margin: "10px"}} className="important">{this.props.count}</span>
         );
     }
 }
@@ -149,7 +154,7 @@ class Field extends Component{
 }
 
 class Tile extends Component {
-    constructor(props){
+    constructor(){
         super();
         this.setActive = this.setActive.bind(this);
     }
@@ -171,7 +176,6 @@ class Tile extends Component {
                 active.classList.remove('activeTile');
                 tiles[i].classList.add("activeTile");
                 tiles[i].setAttribute('background',"url('" + images[Math.round(Math.random())] + "') no-repeat !important");
-                console.log("url('" + images[Math.round(Math.random())] + "') no-repeat !important");
                 this.props.increaseCounter();
             }catch(e){}
         }
@@ -194,7 +198,7 @@ class Scoreboard extends Component{
         }
         return(
             <div className="Scoreboard">
-                <p className="counterContainer headline">Highscores</p>
+                <p className="headline">Highscores</p>
                 <Table responsive={true}>
                     <TableHeader onSort={this.sort} labels={['Name','Score']} sortIndex={1} sortAscending={false}/>
                     <tbody>
@@ -212,18 +216,16 @@ class Scoreboard extends Component{
         this.addEntry({name: "P3", score: 3*rndm});
     }
     addHtml(entry, key){
-        console.log(this.state.entries);
         return <TableRow key={key}><td>{entry.name}</td><td>{entry.score}</td></TableRow>;
     }
     addEntry(entry){
-        let tmp_entries = this.state.entries;
+        let tmp_entries = this.state.entries == null ? [] : this.state.entries;
         tmp_entries.push({name: entry.name, score: entry.score});
         this.sort();
         this.setState({entries: tmp_entries});
     }
     sort(){
-        console.log("sorting");
-        let tmp_entries = this.state.entries;
+        let tmp_entries = this.state.entries == null ? [] : this.state.entries;
         tmp_entries.sort(this.entryComparator);
         this.setState({entries: tmp_entries});
     }
@@ -243,7 +245,7 @@ class Countdown extends Component{
     }
     render(){
         return(
-            <span>{this.state.secs}</span>
+            <span style={{margin: "10px"}} className="important">{this.state.secs}</span>
         );
     }
     countDown(){
