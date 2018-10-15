@@ -94,7 +94,7 @@ class ControlPanel extends Component{
             <div className="ControlPanel">
                 <input type="button" id="startButton" className="ControlPanelChild button important" onClick={this.setRunning} value={this.state.buttonText} />
                 <div className="ControlPanelChild"><p className="headline">Time<Countdown ref={this.countDown} time={10} onComplete={this.props.app.gameEnd}/></p></div>
-                <div className="ControlPanelChild"><p className="headline">Point<Counter count={this.props.count} /></p></div>
+                <div className="ControlPanelChild"><p className="headline">Points<Counter count={this.props.count} /></p></div>
             </div>
         );
     }
@@ -121,7 +121,7 @@ class ControlPanel extends Component{
 class Counter extends Component{
     render(){
         return(
-            <span id="counter" className="important">{this.props.count}</span>
+            <span id="counter" style={{margin: "10px"}} className="important">{this.props.count}</span>
         );
     }
 }
@@ -245,7 +245,7 @@ class Countdown extends Component{
     }
     render(){
         return(
-            <span style className="important">{this.state.secs}</span>
+            <span style={{margin: "10px"}} className="important">{this.state.secs}</span>
         );
     }
     countDown(){

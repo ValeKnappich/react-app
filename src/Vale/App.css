@@ -23,7 +23,10 @@
     font-size: 3vh;
 }
 .headline{
+    display: flex;
     font-weight: bold;
+    margin: 0;
+    align-items: center;
 }
 .button{
     background: #466496;
@@ -55,6 +58,7 @@
 .ControlPanelChild{
     height: 8vh;
     display: flex;
+    justify-content: center;
     flex-direction: row;
 }
 .counterContainer{
