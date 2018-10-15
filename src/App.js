@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import ValesMiniGame from './ValesMiniGame'
-import './App.css';
+import ValesMiniGame from './Vale/ValesMiniGame'
+import './Vale/App.css';
 import '../node_modules/grommet-css';
 import {Tabs, Tab} from 'grommet';
 
@@ -11,7 +11,7 @@ class App extends Component {
     }
     render() {
         return (
-            <Tabs>
+            <Tabs style={{borderBottom: '1px solid black'}}>
                 <Tab title="Vale">
                     <ValesMiniGame parent={this}/>
                 </Tab>
