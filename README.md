@@ -25,7 +25,9 @@ class Elternklasse extends Component{
 Zugriff auf Eltern von Kind aus:
 
 class Elternklasse extends Component{
+
   render(){
+  
     return (
       <meinKind ich={this} /> //Verweis auf die Elternkomponente
       <meinKind meineMethode={this.meineMethode} /> //Verweis auf eine Methode der Elternklasse
@@ -37,3 +39,34 @@ class Kinderklasse extends Component{
      this.props.meineMethode();    //Zugriff via this.props.NAME_DES_CUSTOM_ATTRIBUTS
   }
 }
+Bewertungskriterien:
+
+Programmcode		20%
+Verzeichnisse			2%
+Dateistruktur			3%
+Kommentare			2%
+Formatierung			2%
+Gliederung			6%
+Programmiertechnik	3%
+Verständlichkeit		3%
+
+
+Funktionen			25%
+Verwendung ext APIs	6%
+Validierung			3%
+Sicherheit			3%
+Dynamik				5%
+Fehler vorhanden		8%
+
+
+Design				5%
+Browserkompatibilität	1%
+Seitenaufbau			2%
+Benutzbarkeit			1%
+Hilfetexte				1%
+
+
+Präsentationen		50%
+Selbsttudium I			25%
+Selbsttudium II		25%
+
