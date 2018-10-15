@@ -40,7 +40,7 @@ class Kinderklasse extends Component{
      this.props.meineMethode();    //Zugriff via this.props.NAME_DES_CUSTOM_ATTRIBUTS
   }
 }
-``
+```
 Bewertungskriterien:
 
 Programmcode		20%
