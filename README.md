@@ -7,7 +7,7 @@ Bestehend aus 4 Tabs, die je ein Minigame enthalten
 Jeder hat einen eigenen Branch, sowie ein eigenes Verzeichnis in /src, in dem das MiniGame definiert wird. 
 In der App.js bitte nur die imports und das eigene MiniGame im jeweiligen Tab.
 
-###Hilfestellung:
+### Hilfestellung:
 
 **Zugriff von Komponenten von anderen Komponenten aus:**
 
@@ -19,7 +19,7 @@ class Elternklasse extends Component{
     this.meinKind = React.createRef();
   }
   irgendNeMethode(){
-    this.meinKind.current.methodeImKind();    //Wichtig: **current**
+    this.meinKind.current.methodeImKind();    //Wichtig: current
   }
 }
 ```
@@ -41,34 +41,36 @@ class Kinderklasse extends Component{
   }
 }
 ```
-###Bewertungskriterien:
+### Bewertungskriterien:
 
-Programmcode		20%
-Verzeichnisse			2%
-Dateistruktur			3%
-Kommentare			2%
-Formatierung			2%
-Gliederung			6%
-Programmiertechnik	3%
-Verständlichkeit		3%
-
-
-Funktionen			25%
-Verwendung ext APIs	6%
-Validierung			3%
-Sicherheit			3%
-Dynamik				5%
-Fehler vorhanden		8%
+| Kriterium | Gewichtung |
+|-----------|------------|
+|**Programmcode|		20%**|
+|Verzeichnisse|2%|
+|Dateistruktur|			3%|
+|Kommentare|			2%|
+|Formatierung|			2%|
+|Gliederung|			6%|
+|Programmiertechnik|	3%|
+|Verständlichkeit|		3%|
 
 
-Design				5%
-Browserkompatibilität	1%
-Seitenaufbau			2%
-Benutzbarkeit			1%
-Hilfetexte				1%
+|Funktionen|			25%|
+|Verwendung ext APIs|	6%|
+|Validierung|	3%|
+|Sicherheit|3%|
+|Dynamik|				5%|
+|Fehler vorhanden	|	8%|
 
 
-Präsentationen		50%
-Selbsttudium I			25%
-Selbsttudium II		25%
+|Design|				5%|
+|Browserkompatibilität|	1%|
+|Seitenaufbau|			2%|
+|Benutzbarkeit|			1%|
+|Hilfetexte|				1%|
+
+
+|Präsentationen|		50%|
+|Selbsttudium I|			25%|
+|Selbsttudium II|		25%|
 
