@@ -13,6 +13,7 @@ Zugriff von Komponenten von anderen Komponenten aus:
 
 Zugriff auf Kinder von der Elternklasse:   (using ref's)
 
+
 class Elternklasse extends Component{
   constructor(){
     this.meinKind = React.createRef();
@@ -24,10 +25,9 @@ class Elternklasse extends Component{
 
 Zugriff auf Eltern von Kind aus:
 
-class Elternklasse extends Component{
 
+class Elternklasse extends Component{
   render(){
-  
     return (
       <meinKind ich={this} /> //Verweis auf die Elternkomponente
       <meinKind meineMethode={this.meineMethode} /> //Verweis auf eine Methode der Elternklasse
