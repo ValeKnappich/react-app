@@ -44,6 +44,7 @@ class Kinderklasse extends Component{
 ### Bewertungskriterien:
 
 **Programmcode		20%**
+
 | Kriterium | Gewichtung |
 |-----------|------------|
 |Verzeichnisse|2%|
@@ -55,6 +56,7 @@ class Kinderklasse extends Component{
 |Verständlichkeit|		3%|
 
 **Funktionen			25%**
+
 | Kriterium | Gewichtung |
 |-----------|------------|
 |Verwendung ext APIs|	6%|
@@ -64,6 +66,7 @@ class Kinderklasse extends Component{
 |Fehler vorhanden	|	8%|
 
 **Design				5%**
+
 | Kriterium | Gewichtung |
 |-----------|------------|
 |Browserkompatibilität|	1%|
@@ -72,6 +75,7 @@ class Kinderklasse extends Component{
 |Hilfetexte|				1%|
 
 **Präsentationen		50%**
+
 | Kriterium | Gewichtung |
 |-----------|------------|
 |Selbsttudium I|			25%|
