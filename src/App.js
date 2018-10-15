@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PaulsMinigame from './Paul/PaulsMiniGame';
+import './Paul/PaulsMiniGame.css';
 import ValesMiniGame from './Vale/ValesMiniGame'
 import './Vale/App.css';
 import '../node_modules/grommet-css';
@@ -21,8 +23,8 @@ class App extends Component {
                 <Tab title="Richard">
 
                 </Tab>
-                <Tab title="Paul">
-
+                <Tab title="Paul" >
+                    <PaulsMinigame  />
                 </Tab>
             </Tabs>
         );
