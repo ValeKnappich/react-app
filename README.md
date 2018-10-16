@@ -50,9 +50,20 @@ class Kinderklasse extends Component{
 **Zustand speichern bei Tabwechsel:**
 
 Wird der Tab gewechselt wird der state des alten Tabs verworfen.
-Um dies zu verhindern habe ich in der obersten Komponente eine Objekt "store" angelegt. 
-Also falls ihr Zustände (z.B. bei mir das Scoreboard) sichern wollt tut das in der componentDidMount() (Laden des Zustands) und der ComponentWillUnmount() (speichern des Zustands)
+Um dies zu verhindern habe ich in der obersten Komponente eine Objekt "store" angelegt. In diesem Objekt existiert wiederum ein Objekt 'vale', ihr könnt euch gerne auch eins anlegen, falls ihr das wollt.
+Falls ihr Zustände (z.B. bei mir das Scoreboard) sichern wollt tut das in der componentDidMount() (Laden des Zustands) und der ComponentWillUnmount() (speichern des Zustands)
 
+z.B.
+```javascript
+class meineKomponenteDieGespeichertWerdenSoll extends Component{
+  componentWillUnmount(){
+    this.props.parent.store.vale.scoreboard = this.state;
+  }
+  componentDidMount(){
+    this.setState(this.props.store.vale.scoreboard);
+  }
+}
+```
 
 ### Bewertungskriterien:
 
