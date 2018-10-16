@@ -9,7 +9,7 @@ In der App.js bitte nur die imports und das eigene MiniGame im jeweiligen Tab.
 
 ### Hilfestellung:
 
-**Zugriff von Komponenten von anderen Komponenten aus:**
+**Zugriff auf Komponenten von anderen Komponenten aus:**
 
 Zugriff auf Kinder von der Elternklasse:   (using ref's)
 
@@ -17,6 +17,11 @@ Zugriff auf Kinder von der Elternklasse:   (using ref's)
 class Elternklasse extends Component{
   constructor(){
     this.meinKind = React.createRef();
+  }
+  render(){
+     return(
+        <meinKind ref={this.meinKind}/>
+     );
   }
   irgendNeMethode(){
     this.meinKind.current.methodeImKind();    //Wichtig: current
@@ -42,6 +47,13 @@ class Kinderklasse extends Component{
   }
 }
 ```
+**Zustand speichern bei Tabwechsel:**
+
+Wird der Tab gewechselt wird der state des alten Tabs verworfen.
+Um dies zu verhindern habe ich in der obersten Komponente eine Objekt "store" angelegt. 
+Also falls ihr Zustände (z.B. bei mir das Scoreboard) sichern wollt tut das in der componentDidMount() (Laden des Zustands) und der ComponentWillUnmount() (speichern des Zustands)
+
+
 ### Bewertungskriterien:
 
 **Programmcode		20%**
