@@ -1,17 +1,15 @@
-# react-app
-
-## Webengineering Projekt Semester 3
+# React-App: Webengineering Projekt Semester 3
 
 Bestehend aus 4 Tabs, die je ein Minigame enthalten
 
 Jeder hat einen eigenen Branch, sowie ein eigenes Verzeichnis in /src, in dem das MiniGame definiert wird. 
 In der App.js bitte nur die imports und das eigene MiniGame im jeweiligen Tab.
 
-### Hilfestellung:
+## Hilfestellung:
 
-**Zugriff auf Komponenten von anderen Komponenten aus:**
+### Zugriff auf Komponenten von anderen Komponenten aus:
 
-Zugriff auf Kinder von der Elternklasse:   (using ref's)
+**Zugriff auf Kinder von der Elternklasse:   (using ref's)**
 
 ```javascript
 class Elternklasse extends Component{
@@ -29,7 +27,7 @@ class Elternklasse extends Component{
 }
 ```
 
-Zugriff auf Eltern von Kind aus:    (using props)
+**Zugriff auf Eltern von Kind aus:    (using props)**
 
 ```javascript
 class Elternklasse extends Component{
@@ -47,7 +45,7 @@ class Kinderklasse extends Component{
   }
 }
 ```
-**Zustand speichern bei Tabwechsel:**
+### Zustand speichern bei Tabwechsel:
 
 Wird der Tab gewechselt wird der state des alten Tabs verworfen.
 Um dies zu verhindern habe ich in der obersten Komponente eine Objekt "store" angelegt. In diesem Objekt existiert wiederum ein Objekt 'vale', ihr könnt euch gerne auch eins anlegen, falls ihr das wollt.
@@ -65,7 +63,7 @@ class meineKomponenteDieGespeichertWerdenSoll extends Component{
 }
 ```
 
-### Bewertungskriterien:
+## Bewertungskriterien:
 
 **Programmcode		20%**
 
