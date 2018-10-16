@@ -1,6 +1,6 @@
 //React
 import React, { Component } from 'react';
-import './App.css';
+import './ValesMiniGame.css';
 //Components
 import {Table, TableRow, TableHeader} from 'grommet';
 import '../../node_modules/grommet-css';

@@ -20,7 +20,7 @@
     height: 100%;
 }
 .important{
-    font-size: 1.5rem;
+    font-size: 3vh;
 }
 .headline{
     display: flex;
@@ -30,7 +30,8 @@
 }
 .button{
     background: #466496;
-    width: 15vw;
+    width: fit-content;
+    min-width: 15vw;
     outline: none;
     border: 1px solid aliceblue;
     border-radius: 10px;
@@ -121,11 +122,9 @@
   background: #3694E7;
   outline: none;
 }
-
-/*
-@media (max-width: 500px) {
+@media (max-width: 500px){
     .MainView{
         flex-direction: column;
+        align-items: center;
     }
-
-}*/
+}

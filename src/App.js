@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PaulsMinigame from './Paul/PaulsMiniGame';
 import './Paul/PaulsMiniGame.css';
 import ValesMiniGame from './Vale/ValesMiniGame'
-import './Vale/App.css';
+import './Vale/ValesMiniGame.css';
 import '../node_modules/grommet-css';
 import {Tabs, Tab} from 'grommet';
 
