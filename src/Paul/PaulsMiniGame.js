@@ -98,7 +98,6 @@ class Container extends React.Component {
 
     //sorgt für die Darstellung des Buttons 2-Player und ruft die Funktion this.reset() bei klick auf, die diesen Modus einleitet
     inputModeField1() {
-        {
             return (
                 <Mode_1
                     id="mode_1"
@@ -106,7 +105,6 @@ class Container extends React.Component {
                 >2-Player
                 </Mode_1>
             );
-        }
     }
 
     //sorgt für die Darstellung des Buttons 1-Player (Crazy Robot starts) und ruft die Funktion this.mode_2() bei klick auf, die diesen Modus einleutet

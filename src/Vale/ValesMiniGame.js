@@ -1,11 +1,14 @@
 //React
 import React, { Component } from 'react';
-import './App.css';
+import './ValesMiniGame.css';
 //Components
 import {Table, TableRow, TableHeader} from 'grommet';
 import '../../node_modules/grommet-css';
+import ReactDOM from "react-dom";
+import openPopup from '../ShareComponents/popup'
 
 const settings = {dimension: 6};
+
 
 export class ValesMiniGame extends Component {
     constructor(){
@@ -14,17 +17,19 @@ export class ValesMiniGame extends Component {
         this.startGame = this.startGame.bind(this);
         this.reset = this.reset.bind(this);
         this.gameEnd = this.gameEnd.bind(this);
-        this.state = {count: 0};
+        this.popupwrapper = this.popupwrapper.bind(this);
+        this.state = {count: 0, lastActiveTile: 0, lastCount: 0};
         this.controlPanel = React.createRef();
         this.scoreboard = React.createRef();
     }
     render() {
         return (
             <div className="App">
+                <button className="button" onClick={this.popupwrapper}>Popup</button>
                 <ControlPanel app={this} ref={this.controlPanel} startGame={this.startGame} count={this.state.count} />
                 <div className="MainView">
                     <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-                        <Field increaseCounter={this.increaseCounter}/>
+                        <Field app={this} increaseCounter={this.increaseCounter}/>
                     </div>
                     <Scoreboard ref={this.scoreboard}/>
                 </div>
@@ -57,11 +62,17 @@ export class ValesMiniGame extends Component {
             tiles[i].disabled = true;
         }
         this.controlPanel.current.setState({buttonText: "Game Over!"});
-        let entered_name = prompt("You reached "+this.state.count+" Points!\nEnter your Name to save your Score!");
-        if(entered_name === "" || entered_name === null){
-            entered_name = "Unnamed";
-        }
-        this.scoreboard.current.addEntry({name: entered_name, score: this.state.count});
+        //Popup
+        this.setState({lastCount: this.state.count});
+        openPopup("You reached " + this.state.lastCount + " Points!\nEnter your name",
+            [["Cancel",()=>{
+                ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+            }],["Submit",(event)=>{
+                event.preventDefault();
+                const input = document.getElementById('popup_input');
+                this.scoreboard.current.addEntry({name: input.value === "" ? "Unnamed" : input.value, score: this.state.lastCount});
+                ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+            }]],true);
         this.reset();
     }
     reset(){
@@ -79,6 +90,17 @@ export class ValesMiniGame extends Component {
         this.controlPanel.current.setState({buttonText: "Start Game!"});
         //Reset timer
         this.controlPanel.current.countDown.current.reset();
+    }
+    popupwrapper(){
+        openPopup("You reached " + this.state.lastCount + " Points!\nEnter your name",
+            [["Cancel",()=>{
+                ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+            }],["Submit",(event)=>{
+                event.preventDefault();
+                const input = document.getElementById('popup_input');
+                this.scoreboard.current.addEntry({name: input.value === "" ? "Unnamed" : input.value, score: this.state.lastCount});
+                ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+            }]],true);
     }
 }
 
@@ -137,10 +159,10 @@ class Field extends Component{
         let i = 0;
         while(count <= settings.dimension*settings.dimension){
             if(count % settings.dimension === 1 && i!==0){
-                tiles[i] = <br key={i}/>;
+                tiles[i] = <hr key={i}/>;
                 i++;
             }
-            tiles[i] = <Tile ref={this.tiles.count} tileNumber={count} key={i} increaseCounter={this.props.increaseCounter}/>;
+            tiles[i] = <Tile ref={this.tiles.count} tileNumber={count} key={i} increaseCounter={this.props.increaseCounter} app={this.props.app}/>;
             i++;
             count++;
         }
@@ -157,28 +179,38 @@ class Tile extends Component {
     constructor(){
         super();
         this.setActive = this.setActive.bind(this);
+        this.setNormalColor = this.setNormalColor.bind(this);
     }
     render(){
         return(
-            <button className="Tile" onClick={this.setActive} id={this.props.tileNumber}/>
+            <button className="Tile" onClick={this.setActive} id={this.props.tileNumber} />
         );
     }
     setActive(){
-        //Random images
-        let images = ["./rich.jpg", "img1.jpeg"];
-
-        let i = Math.floor(Math.random() * (settings.dimension*settings.dimension-1));
         let callingTile = document.getElementById(this.props.tileNumber);
-        let tiles = document.getElementsByClassName('Tile');
-        let active = document.getElementsByClassName('activeTile')[0];
         if(callingTile.classList.contains('activeTile')) {      //If yellow tile gets clicked
+            let tileNumber=0;
+            do {
+                tileNumber = Math.floor(Math.random() * (settings.dimension * settings.dimension-1));
+                //tileNumber = Math.floor(Math.random() * 5);
+            }while(tileNumber === this.props.app.state.lastActiveTile);
+            this.props.app.state.lastActiveTile = tileNumber;
+            let tiles = document.getElementsByClassName('Tile');
             try {
-                active.classList.remove('activeTile');
-                tiles[i].classList.add("activeTile");
-                tiles[i].setAttribute('background',"url('" + images[Math.round(Math.random())] + "') no-repeat !important");
+                callingTile.style.background = "#EFDA51";
+                callingTile.classList.remove('activeTile');
+                setTimeout(this.setNormalColor,300);
+                callingTile.style.transform = "rotateX(180deg)";
+                tiles[tileNumber+1].classList.add("activeTile");
                 this.props.increaseCounter();
             }catch(e){}
         }
+    }
+    setNormalColor(){
+        let callingTile = document.getElementById(this.props.tileNumber);
+        /*callingTile.classList.remove('activeTile');*/
+        callingTile.style.transform = "";
+        callingTile.style.background = "#466496";
     }
 }
 
