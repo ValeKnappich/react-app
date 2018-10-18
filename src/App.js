@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import ValesMiniGame from './ValesMiniGame'
-import './App.css';
+import PaulsMinigame from './Paul/PaulsMiniGame';
+import './Paul/PaulsMiniGame.css';
+import ValesMiniGame from './Vale/ValesMiniGame'
+import './Vale/ValesMiniGame.css';
 import '../node_modules/grommet-css';
 import {Tabs, Tab} from 'grommet';
 
 class App extends Component {
+    constructor(){
+        super();
+        this.store = {vale: {scoreboard_entries: null}};
+    }
     render() {
         return (
-            <Tabs>
+            <Tabs style={{borderBottom: '1px solid black'}} responsive={false}>
                 <Tab title="Vale">
-                    <ValesMiniGame/>
+                    <ValesMiniGame parent={this}/>
                 </Tab>
                 <Tab title="Markus">
 
@@ -18,8 +23,8 @@ class App extends Component {
                 <Tab title="Richard">
 
                 </Tab>
-                <Tab title="Paul">
-
+                <Tab title="Paul" >
+                    <PaulsMinigame  />
                 </Tab>
             </Tabs>
         );

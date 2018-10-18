@@ -1,0 +1,158 @@
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
+}
+
+.App-header {
+    background-color: #222;
+    height: 150px;
+    padding: 20px;
+    color: white;
+}
+
+.App-title {
+    font-size: 1.5em;
+}
+
+.App-intro {
+    font-size: large;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/*Layout Allgemein*/
+.PaulsBody {
+    background-color: lightskyblue;
+    position: absolute;
+    /*height: 46.05vw;*/
+    height: 94.31%;
+
+    top: 2.8vw;
+    width: 100vw;
+}
+
+.button2 {
+    width: 6vw;
+    height: 100%;
+    font-size: 2vw;
+}
+
+.Paulh1 {
+    position: relative;
+    text-align: center;
+    font-family: Verdana;
+    color: white;
+    text-shadow: transparent 0px 0px 0px, #000 1px 2px 1px;
+    top: 2vw;
+    left: 24.8vw;
+    width: 50vw;
+}
+
+.tables{
+    position: relative;
+    left: 20.5vw;
+    top: 1vw;
+    width: 15vw;
+    height: 5vw;
+    margin: 0%;
+    padding: 0;
+    border: 0;
+    text-align: center;
+    border-collapse: collapse;
+    font-family: Verdana;
+}
+
+/*Layout der 3 Spielmodi Buttons*/
+#mode_1 {
+    height: 6%;
+    width: 20vw;
+    position: relative;
+    font-size: 1vw;
+    top: 2vw;
+    border-collapse: collapse;
+}
+
+#mode_2 {
+    height: 6%;
+    width: 20vw;
+    position: relative;
+    font-size: 1vw;
+    top: 2vw;
+}
+
+#mode_3 {
+    height: 6%;
+    width: 20vw;
+    position: relative;
+    font-size: 1vw;
+    top: 2vw;
+    background-color: khaki;
+}
+
+.positionModeButtons {
+    position: absolute;
+    top: 8vw;
+    left: 67.53vw;
+    width: 30vw;
+    height: 1vw;
+    font-size: 1vw;
+
+}
+
+
+
+
+/*Layout and position of Text ans Pictures below of the game field*/
+.textNextPlayer {
+    position: relative;
+    top: 3vw;
+    left: 24.8vw;
+    width: 50vw;
+    font-size: 1vw;
+    text-align: center;
+    font-family: Verdana;
+    color: black;
+    text-blink: 2;
+    text-shadow: transparent 0px 0px 0px, #000 0.5px 0.2px 0.5px;
+
+}
+
+.textResult {
+    position: relative;
+    top: 3vw;
+    left: 24.8vw;
+    width: 50vw;
+    font-size: 2vw;
+    text-align: center;
+    font-family: Verdana;
+    color: black;
+    animation: blinker 1s linear infinite;
+    color: white;
+    text-shadow: 0 0 15px #fff, 0 0 110px #fff, 0 0 15px #fff, 0 0 120px #49ff18, 0 0 30px #49ff18, 0 0 140px #49ff18, 0 0 105px #49ff18, 0 0 120px white;
+}
+
+@keyframes blinker {
+    10% {
+        opacity: 0;
+    }
+}
+
+.image {
+    position: relative;
+    top: 4vw;
+    left: 35.53vw;
+    width: 30vw;
+    height: 18.9vw;
+    font-size: 1vw;
+}

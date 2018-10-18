@@ -1,11 +1,14 @@
 //React
 import React, { Component } from 'react';
-import './App.css';
+import './ValesMiniGame.css';
 //Components
 import {Table, TableRow, TableHeader} from 'grommet';
-import '../node_modules/grommet-css';
+import '../../node_modules/grommet-css';
+import ReactDOM from "react-dom";
+import openPopup from '../ShareComponents/popup'
 
 const settings = {dimension: 6};
+
 
 export class ValesMiniGame extends Component {
     constructor(){
@@ -14,32 +17,41 @@ export class ValesMiniGame extends Component {
         this.startGame = this.startGame.bind(this);
         this.reset = this.reset.bind(this);
         this.gameEnd = this.gameEnd.bind(this);
-        this.state = {count: 0};
+        this.popupwrapper = this.popupwrapper.bind(this);
+        this.state = {count: 0, lastActiveTile: 0, lastCount: 0};
         this.controlPanel = React.createRef();
         this.scoreboard = React.createRef();
     }
     render() {
         return (
             <div className="App">
+                <button className="button" onClick={this.popupwrapper}>Popup</button>
                 <ControlPanel app={this} ref={this.controlPanel} startGame={this.startGame} count={this.state.count} />
-                <Field increaseCounter={this.increaseCounter}/>
-                <Scoreboard ref={this.scoreboard}/>
+                <div className="MainView">
+                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                        <Field app={this} increaseCounter={this.increaseCounter}/>
+                    </div>
+                    <Scoreboard ref={this.scoreboard}/>
+                </div>
             </div>
         );
     }
+    componentDidMount(){
+        if(this.props.parent.store.vale.scoreboard_entries !== null) {
+            this.scoreboard.current.setState({entries: this.props.parent.store.vale.scoreboard_entries});
+        }
+    }
+    componentWillUnmount(){
+        this.props.parent.store.vale.scoreboard_entries = this.scoreboard.current.state.entries;
+    }
     increaseCounter(){
-        this.setState((state) => {
-            return {count: state.count + 1}
-        });
+        this.setState({count: this.state.count+1});
     }
     startGame(){
-        //ControlPanel
         this.controlPanel.current.countDown.current.start();
-        //Game Logic
         let i = Math.floor(Math.random() * 8);
         let tiles = document.getElementsByClassName("Tile");
         tiles[i].classList.add("activeTile");
-        //Reactivate Tiles if 2nd round
         for(let i=0;i<settings.dimension*settings.dimension; i++){
             tiles[i].disabled = false;
         }
@@ -50,11 +62,17 @@ export class ValesMiniGame extends Component {
             tiles[i].disabled = true;
         }
         this.controlPanel.current.setState({buttonText: "Game Over!"});
-        let entered_name = prompt("You reached "+this.state.count+" Points!\nEnter your Name to save your Score!");
-        if(entered_name === "" || entered_name === null){
-            entered_name = "Unnamed";
-            this.scoreboard.current.addEntry({name: entered_name, score: this.state.count});
-        }
+        //Popup
+        this.setState({lastCount: this.state.count});
+        openPopup("You reached " + this.state.lastCount + " Points!\nEnter your name",
+            [["Cancel",()=>{
+                ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+            }],["Submit",(event)=>{
+                event.preventDefault();
+                const input = document.getElementById('popup_input');
+                this.scoreboard.current.addEntry({name: input.value === "" ? "Unnamed" : input.value, score: this.state.lastCount});
+                ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+            }]],true);
         this.reset();
     }
     reset(){
@@ -66,14 +84,23 @@ export class ValesMiniGame extends Component {
             }
         }
         //Reset counter
-        this.setState((state) => {
-            return {count: 0}
-        });
+        this.setState({count: 0});
         //Reset Button
         document.getElementById('startButton').disabled = false;
         this.controlPanel.current.setState({buttonText: "Start Game!"});
         //Reset timer
         this.controlPanel.current.countDown.current.reset();
+    }
+    popupwrapper(){
+        openPopup("You reached " + this.state.lastCount + " Points!\nEnter your name",
+            [["Cancel",()=>{
+                ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+            }],["Submit",(event)=>{
+                event.preventDefault();
+                const input = document.getElementById('popup_input');
+                this.scoreboard.current.addEntry({name: input.value === "" ? "Unnamed" : input.value, score: this.state.lastCount});
+                ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+            }]],true);
     }
 }
 
@@ -87,9 +114,9 @@ class ControlPanel extends Component{
     render(){
         return(
             <div className="ControlPanel">
-                <input type="button" id="startButton" onClick={this.setRunning} value={this.state.buttonText} />
-                <div className="counterContainer"><p className="headline">Time</p><Countdown ref={this.countDown} className="Countdown" time={10} onComplete={this.props.app.gameEnd}/></div>
-                <div className="counterContainer"><p className="headline">Points</p><Counter count={this.props.count} /></div>
+                <input type="button" id="startButton" className="ControlPanelChild button important" onClick={this.setRunning} value={this.state.buttonText} />
+                <div className="ControlPanelChild"><p className="headline">Time<Countdown ref={this.countDown} time={10} onComplete={this.props.app.gameEnd}/></p></div>
+                <div className="ControlPanelChild"><p className="headline">Points<Counter count={this.props.count} /></p></div>
             </div>
         );
     }
@@ -116,7 +143,7 @@ class ControlPanel extends Component{
 class Counter extends Component{
     render(){
         return(
-            <span id="counter" >{this.props.count}</span>
+            <span id="counter" style={{margin: "10px"}} className="important">{this.props.count}</span>
         );
     }
 }
@@ -132,10 +159,10 @@ class Field extends Component{
         let i = 0;
         while(count <= settings.dimension*settings.dimension){
             if(count % settings.dimension === 1 && i!==0){
-                tiles[i] = <br key={i}/>;
+                tiles[i] = <hr key={i}/>;
                 i++;
             }
-            tiles[i] = <Tile ref={this.tiles.count} tileNumber={count} key={i} increaseCounter={this.props.increaseCounter}/>;
+            tiles[i] = <Tile ref={this.tiles.count} tileNumber={count} key={i} increaseCounter={this.props.increaseCounter} app={this.props.app}/>;
             i++;
             count++;
         }
@@ -149,32 +176,41 @@ class Field extends Component{
 }
 
 class Tile extends Component {
-    constructor(props){
+    constructor(){
         super();
         this.setActive = this.setActive.bind(this);
+        this.setNormalColor = this.setNormalColor.bind(this);
     }
     render(){
         return(
-            <button className="Tile" onClick={this.setActive} id={this.props.tileNumber}/>
+            <button className="Tile" onClick={this.setActive} id={this.props.tileNumber} />
         );
     }
     setActive(){
-        //Random images
-        let images = ["./rich.jpg", "img1.jpeg"];
-
-        let i = Math.floor(Math.random() * (settings.dimension*settings.dimension-1));
         let callingTile = document.getElementById(this.props.tileNumber);
-        let tiles = document.getElementsByClassName('Tile');
-        let active = document.getElementsByClassName('activeTile')[0];
         if(callingTile.classList.contains('activeTile')) {      //If yellow tile gets clicked
+            let tileNumber=0;
+            do {
+                tileNumber = Math.floor(Math.random() * (settings.dimension * settings.dimension-1));
+                //tileNumber = Math.floor(Math.random() * 5);
+            }while(tileNumber === this.props.app.state.lastActiveTile);
+            this.props.app.state.lastActiveTile = tileNumber;
+            let tiles = document.getElementsByClassName('Tile');
             try {
-                active.classList.remove('activeTile');
-                tiles[i].classList.add("activeTile");
-                tiles[i].setAttribute('background',"url('" + images[Math.round(Math.random())] + "') no-repeat !important");
-                console.log("url('" + images[Math.round(Math.random())] + "') no-repeat !important");
+                callingTile.style.background = "#EFDA51";
+                callingTile.classList.remove('activeTile');
+                setTimeout(this.setNormalColor,300);
+                callingTile.style.transform = "rotateX(180deg)";
+                tiles[tileNumber+1].classList.add("activeTile");
                 this.props.increaseCounter();
             }catch(e){}
         }
+    }
+    setNormalColor(){
+        let callingTile = document.getElementById(this.props.tileNumber);
+        /*callingTile.classList.remove('activeTile');*/
+        callingTile.style.transform = "";
+        callingTile.style.background = "#466496";
     }
 }
 
@@ -194,7 +230,7 @@ class Scoreboard extends Component{
         }
         return(
             <div className="Scoreboard">
-                <p className="counterContainer headline">Highscores</p>
+                <p className="headline">Highscores</p>
                 <Table responsive={true}>
                     <TableHeader onSort={this.sort} labels={['Name','Score']} sortIndex={1} sortAscending={false}/>
                     <tbody>
@@ -212,18 +248,16 @@ class Scoreboard extends Component{
         this.addEntry({name: "P3", score: 3*rndm});
     }
     addHtml(entry, key){
-        console.log(this.state.entries);
         return <TableRow key={key}><td>{entry.name}</td><td>{entry.score}</td></TableRow>;
     }
     addEntry(entry){
-        let tmp_entries = this.state.entries;
+        let tmp_entries = this.state.entries == null ? [] : this.state.entries;
         tmp_entries.push({name: entry.name, score: entry.score});
         this.sort();
         this.setState({entries: tmp_entries});
     }
     sort(){
-        console.log("sorting");
-        let tmp_entries = this.state.entries;
+        let tmp_entries = this.state.entries == null ? [] : this.state.entries;
         tmp_entries.sort(this.entryComparator);
         this.setState({entries: tmp_entries});
     }
@@ -243,7 +277,7 @@ class Countdown extends Component{
     }
     render(){
         return(
-            <span>{this.state.secs}</span>
+            <span style={{margin: "10px"}} className="important">{this.state.secs}</span>
         );
     }
     countDown(){
