@@ -69,7 +69,7 @@ Ich habe eine Popup-Komponente erstellt. Diese liegt in dem Ordner 'SharedCompon
 openPopup(message, buttons, input);
 z.B. 
 openPopup("Dies ist ein tolles Popup\nmit Zeilenumbrüchen", [["ButtonText1",()=>{console.log("onClick des buttons")}],["ButtonText2",()=>{...}]], true;
-```
+
 message: String       Nachricht, die über das Popup angezeigt wird (Zeilenumbruch durch \n)
 
 buttons: 2D-Array     Definiert, welche und wie viele Buttons im Popup sein sollen. 
@@ -77,7 +77,8 @@ buttons: 2D-Array     Definiert, welche und wie viele Buttons im Popup sein soll
                       
 input: boolean        default: false. Entscheidet, ob ein Eingabefeld im Popup sein soll. 
                       Zugriff auf den Inhalt z.B. über document.getElementById('popup_input').value
-                      
+```
+
 ## Bewertungskriterien:
 
 **Programmcode		20%**
