@@ -62,7 +62,22 @@ class meineKomponenteDieGespeichertWerdenSoll extends Component{
   }
 }
 ```
+### Popups
 
+Ich habe eine Popup-Komponente erstellt. Diese liegt in dem Ordner 'SharedComponents' und kann über die Funktion openPopup() gerendert werden. 
+```javascript
+openPopup(message, buttons, input);
+z.B. 
+openPopup("Dies ist ein tolles Popup\nmit Zeilenumbrüchen", [["ButtonText1",()=>{console.log("onClick des buttons")}],["ButtonText2",()=>{...}]], true;
+```
+message: String       Nachricht, die über das Popup angezeigt wird (Zeilenumbruch durch \n)
+
+buttons: 2D-Array     Definiert, welche und wie viele Buttons im Popup sein sollen. 
+                      Schema:   [["button1Text",onclick1Function],["button2Text",onclick2Function]]
+                      
+input: boolean        default: false. Entscheidet, ob ein Eingabefeld im Popup sein soll. 
+                      Zugriff auf den Inhalt z.B. über document.getElementById('popup_input').value
+                      
 ## Bewertungskriterien:
 
 **Programmcode		20%**
