@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
+import './popup.css'
 
 function openPopup(message, buttons, input=false) {
     ReactDOM.render(<Popup message={message} buttons={buttons} input={input}/>, document.getElementById('popup_container'));
@@ -21,9 +22,14 @@ class Popup extends Component{
         const input = document.getElementById('popup_input');
         if(input !== null)input.focus();
         document.getElementById("root").style.opacity = "0.3";
+        this.documentEventListener = document.getElementById('root').addEventListener("click", ()=>{
+            const cancelButton = document.getElementById('popup_button_0')
+            if(cancelButton!==null)cancelButton.click();
+        });
     }
     componentWillUnmount(){
         document.getElementById('root').style.opacity = 1;
+        document.removeEventListener("click",this.documentEventListener);
     }
 }
 
