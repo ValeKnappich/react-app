@@ -25,7 +25,7 @@ export class ValesMiniGame extends Component {
     render() {
         return (
             <div className="App">
-                <button className="button" onClick={this.popupwrapper}>Popup</button>
+                {/*<button className="button" onClick={this.popupwrapper}>Popup</button>*/}
                 <ControlPanel app={this} ref={this.controlPanel} startGame={this.startGame} count={this.state.count} />
                 <div className="MainView">
                     <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
@@ -166,9 +166,8 @@ class Field extends Component{
             i++;
             count++;
         }
-
         return(
-            <div className="Field">
+            <div id="Field">
                 {tiles}
             </div>
         );
@@ -231,13 +230,13 @@ class Scoreboard extends Component{
         return(
             <div className="Scoreboard">
                 <p className="headline">Highscores</p>
-                <Table responsive={true}>
-                    <TableHeader onSort={this.sort} labels={['Name','Score']} sortIndex={1} sortAscending={false}/>
+                <Table responsive={false}>
+                    <TableHeader onSort={this.sort} labels={['Name','Score']} sortIndex={false} sortAscending={false}/>
                     <tbody>
                     {entries}
                     </tbody>
                 </Table>
-                <input type="button" onClick={this.addDummies} value="Insert dummies"/>
+                {/*<input type="button" onClick={this.addDummies} value="Insert dummies"/>*/}
             </div>
         );
     }
