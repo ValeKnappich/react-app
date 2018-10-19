@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: flex-start;
   margin: 0;
-  padding: 10px;
+  padding: 20px;
   padding-top: 0;
 }
 .MainView{
@@ -109,7 +109,7 @@
 
 
 /*Playground stuff */
-.Field hr{
+#Field hr{
     margin: -3px;
 }
 .activeTile{
