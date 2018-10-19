@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import PaulsMinigame from './Paul/PaulsMiniGame';
+import PaulsMiniGame from './Paul/PaulsMiniGame';
 import './Paul/PaulsMiniGame.css';
 import ValesMiniGame from './Vale/ValesMiniGame'
 import './Vale/ValesMiniGame.css';
-import game from './Markus/components/game';
+import MarkusMiniGame from './Markus/components/game';
 
 import '../node_modules/grommet-css';
 import {Tabs, Tab} from 'grommet';
@@ -20,13 +20,13 @@ class App extends Component {
                     <ValesMiniGame parent={this}/>
                 </Tab>
                 <Tab title="Markus">
-                    <game />
+                    <MarkusMiniGame />
                 </Tab>
                 <Tab title="Richard">
 
                 </Tab>
-                <Tab title="Paul" >
-                    <PaulsMinigame  />
+                <Tab title="Paul">
+                    <PaulsMiniGame  />
                 </Tab>
             </Tabs>
         );

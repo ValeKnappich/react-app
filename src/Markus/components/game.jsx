@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import Column from "./column";
 import Modal from "./modal";
+import '../basic.css';
 
-class Game extends Component {
+class MarkusMiniGame extends Component {
   constructor() {
     super();
     this.state = {
@@ -224,4 +225,5 @@ class Game extends Component {
   }
 }
 
-export default Game;
+export default MarkusMiniGame;
+
