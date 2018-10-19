@@ -5,7 +5,7 @@ Bestehend aus 4 Tabs, die je ein Minigame enthalten
 Jeder hat einen eigenen Branch, sowie ein eigenes Verzeichnis in /src, in dem das MiniGame definiert wird. 
 In der App.js bitte nur die imports und das eigene MiniGame im jeweiligen Tab.
 
-Demo: https://valeknappich.github.io/react-app/\n
+[Demo](https://valeknappich.github.io/react-app/)
 (!Achtung: die Demoseite aktualisiert sich nicht automatisch, wenn sich Branches ändern. Es muss zunächst die App deployt werden.)
 
 ## Hilfestellungen:
