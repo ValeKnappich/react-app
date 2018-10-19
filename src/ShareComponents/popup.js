@@ -23,7 +23,7 @@ class Popup extends Component{
         if(input !== null)input.focus();
         document.getElementById("root").style.opacity = "0.3";
         this.documentEventListener = document.getElementById('root').addEventListener("click", ()=>{
-            const cancelButton = document.getElementById('popup_button_0')
+            const cancelButton = document.getElementById('popup_button_0');
             if(cancelButton!==null)cancelButton.click();
         });
     }
