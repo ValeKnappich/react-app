@@ -3,6 +3,8 @@ import PaulsMinigame from './Paul/PaulsMiniGame';
 import './Paul/PaulsMiniGame.css';
 import ValesMiniGame from './Vale/ValesMiniGame'
 import './Vale/ValesMiniGame.css';
+import game from './Markus/components/game';
+
 import '../node_modules/grommet-css';
 import {Tabs, Tab} from 'grommet';
 
@@ -18,7 +20,7 @@ class App extends Component {
                     <ValesMiniGame parent={this}/>
                 </Tab>
                 <Tab title="Markus">
-
+                    <game />
                 </Tab>
                 <Tab title="Richard">
 
