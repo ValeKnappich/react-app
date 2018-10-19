@@ -15,7 +15,7 @@ window.playerOnTurn = 1; // Definiert wer am Zug ist. Nur relevant im Modus 2-Pl
 
 
 //Enthält Hauptkomponente, die exportiert wird und somit am Bildschirm ausgegeben wird
-class PaulsMinigame extends Component {
+class PaulsMiniGame extends Component {
     render() {
         return (
             <Container  />
@@ -23,7 +23,7 @@ class PaulsMinigame extends Component {
     }
 }
 
-export default PaulsMinigame;
+export default PaulsMiniGame;
 
 
 // Klasse, die das gesamte Spiel enthält
