@@ -60,6 +60,8 @@
 }
 
 .tables{
+
+
     position: relative;
     left: 20.5vw;
     top: 1vw;
@@ -72,9 +74,25 @@
     border-collapse: collapse;
     font-family: Verdana;
 }
+@-moz-document url-prefix() {
+
+        .tables{ position: relative;
+            left: 14vw;
+            top: 1vw;
+            width: 15vw;
+            height: 5vw;
+            margin: 0%;
+            padding: 0;
+            border: 0;
+            text-align: center;
+            border-collapse: collapse;
+            font-family: Verdana;}
+
+}
+
 
 /*Layout der 3 Spielmodi Buttons*/
-#mode_1 {
+#mode1 {
     height: 6%;
     width: 20vw;
     position: relative;
@@ -83,7 +101,7 @@
     border-collapse: collapse;
 }
 
-#mode_2 {
+#mode2 {
     height: 6%;
     width: 20vw;
     position: relative;
@@ -91,7 +109,7 @@
     top: 2vw;
 }
 
-#mode_3 {
+#mode3 {
     height: 6%;
     width: 20vw;
     position: relative;

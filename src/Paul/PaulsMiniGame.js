@@ -99,36 +99,36 @@ class Container extends React.Component {
     //sorgt für die Darstellung des Buttons 2-Player und ruft die Funktion this.reset() bei klick auf, die diesen Modus einleitet
     inputModeField1() {
             return (
-                <Mode_1
-                    id="mode_1"
-                    onClick={() => this.mode_1()}
+                <Mode1
+                    id="mode1"
+                    onClick={() => this.mode1()}
                 >2-Player
-                </Mode_1>
+                </Mode1>
             );
     }
 
-    //sorgt für die Darstellung des Buttons 1-Player (Crazy Robot starts) und ruft die Funktion this.mode_2() bei klick auf, die diesen Modus einleutet
+    //sorgt für die Darstellung des Buttons 1-Player (Crazy Robot starts) und ruft die Funktion this.Mode2() bei klick auf, die diesen Modus einleutet
     inputModeField2() {
         return (
-            <Mode_2
-                onClick={() => this.mode_2()}
+            <Mode2
+                onClick={() => this.mode2()}
             >
-            </Mode_2>
+            </Mode2>
         );
     }
 
-    //sorgt für die Darstellung des Buttons 1-Player (You start) und ruft die Funktion this.mode_3() bei klick auf, die diesen Modus einleutet
+    //sorgt für die Darstellung des Buttons 1-Player (You start) und ruft die Funktion this.Mode3() bei klick auf, die diesen Modus einleutet
     inputModeField3() {
         return (
-            <Mode_3
-                onClick={() => this.mode_3()}
+            <Mode3
+                onClick={() => this.mode3()}
             >
-            </Mode_3>
+            </Mode3>
         );
     }
 
     //wird durch klicken des Button eingeleitet  und leitet neues Spiel im Modus 2-Player ein
-    mode_1() {
+    mode1() {
         //alle Felder auf -1 setzen
         let tempFields = this.state.fields.slice();
         for (let i = 0; i < 10; i++) {
@@ -141,15 +141,15 @@ class Container extends React.Component {
         window.playerOnTurn = 0;
         window.scenarioFlag = 0;
         // Button des aktiven Spielmodus highlighten
-        document.getElementById("mode_1").style.backgroundColor = "khaki";
-        document.getElementById("mode_2").style.backgroundColor = "buttonface";
-        document.getElementById("mode_3").style.backgroundColor = "buttonface";
+        document.getElementById("mode1").style.backgroundColor = "khaki";
+        document.getElementById("mode2").style.backgroundColor = "buttonface";
+        document.getElementById("mode3").style.backgroundColor = "buttonface";
     }
 
 
 
     //wird durch klick des  Button eingeleitet  und leitet  neues Spiel im Modus 1-Player (Crazy Robot starts) ein
-    mode_2() {
+    mode2() {
         //alle Felder auf -1 setzen
         let tempFields = this.state.fields.slice();
         for (let i = 0; i < 10; i++) {
@@ -164,13 +164,13 @@ class Container extends React.Component {
         tempFields[4] = 'X';
         window.scenarioFlag = 1;
         // Button des aktiven Spielmodus highlighten
-        document.getElementById("mode_1").style.backgroundColor = "buttonface";
-        document.getElementById("mode_2").style.backgroundColor = "khaki";
-        document.getElementById("mode_3").style.backgroundColor = "buttonface";
+        document.getElementById("mode1").style.backgroundColor = "buttonface";
+        document.getElementById("mode2").style.backgroundColor = "khaki";
+        document.getElementById("mode3").style.backgroundColor = "buttonface";
     }
 
     //wird durch klick des  Button eingeleitet  und leitet  neues  Spiel im Modus 1-Player  (You start) ein
-    mode_3() {
+    mode3() {
         //alle Felder auf -1 setzen
         let tempFields = this.state.fields.slice();
         for (let i = 0; i < 10; i++) {
@@ -183,9 +183,9 @@ class Container extends React.Component {
         window.playerOnTurn = 1;
         window.scenarioFlag = 1;
         // Button des aktiven Spielmodus highlighten
-        document.getElementById("mode_1").style.backgroundColor = "buttonface";
-        document.getElementById("mode_2").style.backgroundColor = "buttonface";
-        document.getElementById("mode_3").style.backgroundColor = "khaki";
+        document.getElementById("mode1").style.backgroundColor = "buttonface";
+        document.getElementById("mode2").style.backgroundColor = "buttonface";
+        document.getElementById("mode3").style.backgroundColor = "khaki";
     }
 
     //befüllt das Spielfeld im Modus 2-PLayer. Je nachdem welcher Spieler am Zug ist, wird X oder O gesetzt. Danach wird window.playerOnTurn umgeändert, dass im nächsten Zug der andere sein Zeichen machen kann
@@ -214,6 +214,10 @@ class Container extends React.Component {
         this.setState({
             fields: tempFields,
         });
+
+        if (this.result(tempFields) === "X wins" || this.result(tempFields) === "O wins"
+            || this.result(tempFields) === "You lose xD" || this.result(tempFields) === "You win QQ") {
+            return;}
 
         //ab hier wird ein passendes Feld für den Computer gesucht und dann gesetzt
         // aufrufen der Funktion estimateBestField. mit diesen Parametern ermittelt sie, ob es ein Feld gibt, mit dem der Computer direkt gewinnen kann
@@ -466,11 +470,11 @@ function estimateBestField(tempFields2, token, token2, token3) {
 }
 
 //Klassenbaustein für den Spielmodus 2-Player
-class Mode_1 extends React.Component {
+class Mode1 extends React.Component {
     render() {
         return (
             <button
-                id="mode_1"
+                id="mode1"
                 onClick={() => this.props.onClick()}
             >
                 2-Player
@@ -480,11 +484,11 @@ class Mode_1 extends React.Component {
 }
 
 //Klassenbaustein für den Spielmodus  1-Player (Crazy Robot starts)
-class Mode_2 extends React.Component {
+class Mode2 extends React.Component {
     render() {
         return (
             <button
-                id="mode_2"
+                id="mode2"
                 onClick={() => this.props.onClick()}
             >
                 1-Player (Crazy Robot starts)
@@ -494,11 +498,11 @@ class Mode_2 extends React.Component {
 }
 
 //Klassenbaustein für den Spielmodus  1-Player (You start)
-class Mode_3 extends React.Component {
+class Mode3 extends React.Component {
     render() {
         return (
             <button
-                id="mode_3"
+                id="mode3"
                 onClick={() => this.props.onClick()}
             >
                 1-Player (You start)
