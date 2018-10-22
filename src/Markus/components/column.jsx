@@ -57,7 +57,14 @@ class Column extends Component {
       this.fieldArray[this.getLastBlanc()] = this.props.color;
       this.props.setGameArray();
 
-      //ckeck if player wins
+      //enables button
+      if (this.getLastBlanc() === 0) {
+        this.setState({ enabled: false });
+        this.props.buttonEnabled[this.props.id] = false;
+        this.props.checkDraw();
+      }
+
+      //ckeck if player wins or if its a draw
       let win = this.props.checkWin(this.props.id, this.getLastBlanc());
       if (win) {
         this.props.setWinner(this.props.color);
@@ -65,11 +72,6 @@ class Column extends Component {
 
       //switches the player color
       this.props.switchPlayer();
-
-      //enables button
-      if (this.getLastBlanc() === 0) {
-        this.setState({ enabled: false });
-      }
     }
   }
 
