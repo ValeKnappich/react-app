@@ -31,6 +31,8 @@
     }
 }
 
+
+
 /*Layout Allgemein*/
 .PaulsBody {
     background-color: lightskyblue;
@@ -60,8 +62,6 @@
 }
 
 .tables{
-
-
     position: relative;
     left: 20.5vw;
     top: 1vw;
@@ -91,31 +91,37 @@
 }
 
 
+
 /*Layout der 3 Spielmodi Buttons*/
-#mode1 {
+.general{
     height: 6%;
-    width: 20vw;
     position: relative;
     font-size: 1vw;
     top: 2vw;
     border-collapse: collapse;
 }
 
-#mode2 {
-    height: 6%;
+#mode1 {
     width: 20vw;
-    position: relative;
-    font-size: 1vw;
-    top: 2vw;
+    background-color: buttonface;
+
+}
+
+#mode2 {
+    width: 20vw;
+    background-color: buttonface;
+
 }
 
 #mode3 {
-    height: 6%;
     width: 20vw;
-    position: relative;
-    font-size: 1vw;
-    top: 2vw;
     background-color: khaki;
+}
+
+#reset {
+    height: 3%;
+    width: 20vw;
+    background-color: buttonface;
 }
 
 .positionModeButtons {
