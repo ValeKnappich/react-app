@@ -14,3 +14,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+#Tabbar{
+  border-bottom: 1px solid black;
+}
+#Tabbar label{
+  font-size: larger;
+}
