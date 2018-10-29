@@ -24,7 +24,6 @@ export class ValesMiniGame extends Component {
     render() {
         return (
             <div className="App">
-                <button className="button" onClick={this.gameEnd}>Popup</button>
                 <ControlPanel app={this} ref={this.controlPanel} startGame={this.startGame} count={this.state.count} />
                 <div className="MainView">
                     <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
