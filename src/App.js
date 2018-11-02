@@ -7,6 +7,7 @@ import MarkusMiniGame from './Markus/components/game';
 
 import '../node_modules/grommet-css';
 import {Tabs, Tab} from 'grommet';
+import RichardsMiniGame from './Richard/RichardsMiniGame';
 
 class App extends Component {
     constructor(){
@@ -23,7 +24,7 @@ class App extends Component {
                     <MarkusMiniGame />
                 </Tab>
                 <Tab title="Richard">
-
+                    <RichardsMiniGame />
                 </Tab>
                 <Tab title="Paul">
                     <PaulsMiniGame  />
