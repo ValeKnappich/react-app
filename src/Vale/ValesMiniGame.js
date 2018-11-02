@@ -24,22 +24,42 @@ export class ValesMiniGame extends Component {
     render() {
         return (
             <div className="App">
+                {/*<button className="button" onClick={()=>openPopup("You reached " + this.state.lastCount + " Points!\nEnter your name",
+                    [["Cancel",()=>{
+                        //Animation
+                        const field = document.getElementById('Field');
+                        field.style.transition = "transform 1s ease-in-out";
+                        field.style.transform = "rotateX(360deg)";
+                        setTimeout(()=>{field.style.transition = "";field.style.transform = "rotateX(0deg)"},1000);
+                        //popup
+                        ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+                    }],["Submit",()=>{
+                        //Animation
+                        const field = document.getElementById('Field');
+                        field.style.transition = "transform 1s ease-in-out";
+                        field.style.transform = "rotateX(360deg)";
+                        setTimeout(()=>{field.style.transition = "";field.style.transform = "rotateX(0deg)"},1000);
+                        //popup
+                        const input = document.getElementById('popup_input');
+                        this.scoreboard.current.addEntry({name: input.value === "" ? "Unnamed" : input.value, score: this.state.lastCount});
+                        ReactDOM.unmountComponentAtNode(document.getElementById('popup_container'));
+                    }]],true)}>Popup</button>*/}
                 <ControlPanel app={this} ref={this.controlPanel} startGame={this.startGame} count={this.state.count} />
                 <div className="MainView">
                     <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-                        <Field app={this} increaseCounter={this.increaseCounter}/>
+                        <Field app={this} increaseCounter={this.increaseCounter} />
                     </div>
                     <Scoreboard ref={this.scoreboard}/>
                 </div>
             </div>
         );
     }
-    componentDidMount(){    //Load state from parent Store
+    componentDidMount(){    //Load state from parent Store when tab is changed to vale
         if(this.props.parent.store.vale.scoreboard_entries !== null) {
             this.scoreboard.current.setState({entries: this.props.parent.store.vale.scoreboard_entries});
         }
     }
-    componentWillUnmount(){ //Save state to parent Store
+    componentWillUnmount(){ //Save state to parent Store when tab is changed from vale
         this.props.parent.store.vale.scoreboard_entries = this.scoreboard.current.state.entries;
     }
     increaseCounter(){
