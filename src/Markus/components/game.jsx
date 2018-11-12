@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Column from "./column";
 import Modal from "./modal";
 
+//main component
+
 class Game extends Component {
   constructor() {
     super();
