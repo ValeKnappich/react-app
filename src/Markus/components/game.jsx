@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Column from "./column";
 import Modal from "./modal";
+import '../basics.css'
 
 class Game extends Component {
   constructor() {
