@@ -17,7 +17,8 @@ class MarkusMiniGame extends Component {
         { id: 6 }
       ],
       playerColor: "yellow",
-      winner: "blanc"
+      winner: "blanc",
+      draw: false
     };
     this.columns = [];
     for (let i = 0; i <= 6; i++) {
@@ -25,6 +26,7 @@ class MarkusMiniGame extends Component {
     }
     this.modal = React.createRef();
     this.gameArray = [];
+    this.buttonEnabled = [true, true, true, true, true, true, true];
     this.setGameArray = this.setGameArray.bind(this);
     this.switchPlayer = this.switchPlayer.bind(this);
     this.getTriangleColor = this.getTriangleColor.bind(this);
@@ -36,6 +38,7 @@ class MarkusMiniGame extends Component {
     this.displayWinner = this.displayWinner.bind(this);
     this.colorToGerman = this.colorToGerman.bind(this);
     this.resetAll = this.resetAll.bind(this);
+    this.checkDraw = this.checkDraw.bind(this);
   }
 
   setWinner(color) {
@@ -68,7 +71,7 @@ class MarkusMiniGame extends Component {
 
   displayWinner() {
     let classes = "winner_";
-    classes += this.state.winner === "red" ? "red" : "yellow";
+    classes += this.state.winner;
     return classes;
   }
 
@@ -185,15 +188,26 @@ class MarkusMiniGame extends Component {
     }
   }
 
+  checkDraw() {
+    let check = false;
+    for (let k = 0; k <= 6; k++) {
+      check = check || this.buttonEnabled[k];
+    }
+    if (check === false) {
+      this.setState({ draw: true });
+    }
+  }
+
   colorToGerman() {
     let color = this.state.winner === "red" ? "Rot" : "Gelb";
     return color;
   }
 
   resetAll() {
-    this.setState({ playerColor: "yellow", winner: "blanc" });
+    this.setState({ playerColor: "yellow", winner: "blanc", draw: false });
     for (let i = 0; i <= 6; i++) {
       this.columns[i].current.resetFields();
+      this.buttonEnabled[i] = true;
     }
   }
 
@@ -211,6 +225,8 @@ class MarkusMiniGame extends Component {
             setGameArray={this.setGameArray}
             checkWin={this.checkWin}
             setWinner={this.setWinner}
+            checkDraw={this.checkDraw}
+            buttonEnabled={this.buttonEnabled}
           />
         ))}
         <Modal
@@ -219,6 +235,7 @@ class MarkusMiniGame extends Component {
           colorToGerman={this.colorToGerman}
           displayWinner={this.displayWinner}
           winner={this.state.winner}
+          draw={this.state.draw}
         />
       </div>
     );
