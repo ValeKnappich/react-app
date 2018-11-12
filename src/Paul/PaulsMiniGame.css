@@ -31,6 +31,8 @@
     }
 }
 
+
+
 /*Layout Allgemein*/
 .PaulsBody {
     background-color: lightskyblue;
@@ -72,32 +74,54 @@
     border-collapse: collapse;
     font-family: Verdana;
 }
+@-moz-document url-prefix() {
+
+        .tables{ position: relative;
+            left: 14vw;
+            top: 1vw;
+            width: 15vw;
+            height: 5vw;
+            margin: 0%;
+            padding: 0;
+            border: 0;
+            text-align: center;
+            border-collapse: collapse;
+            font-family: Verdana;}
+
+}
+
+
 
 /*Layout der 3 Spielmodi Buttons*/
-#mode_1 {
+.general{
     height: 6%;
-    width: 20vw;
     position: relative;
     font-size: 1vw;
     top: 2vw;
     border-collapse: collapse;
 }
 
-#mode_2 {
-    height: 6%;
+#mode1 {
     width: 20vw;
-    position: relative;
-    font-size: 1vw;
-    top: 2vw;
+    background-color: buttonface;
+
 }
 
-#mode_3 {
-    height: 6%;
+#mode2 {
     width: 20vw;
-    position: relative;
-    font-size: 1vw;
-    top: 2vw;
+    background-color: buttonface;
+
+}
+
+#mode3 {
+    width: 20vw;
     background-color: khaki;
+}
+
+#reset {
+    height: 3%;
+    width: 20vw;
+    background-color: buttonface;
 }
 
 .positionModeButtons {
