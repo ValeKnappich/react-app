@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './style.css';
-//Richard ist nice
+//Richard stinkt
 
 const Board_HEIGHT = 20;
 const Board_WIDTH = 10;
