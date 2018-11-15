@@ -9,6 +9,56 @@ const DEADLINE_Y = 19;
 let rotation = 0;
 let outofBorder = false;
 
+class GameBox {
+
+    constructor(xValue, yValue, directionValue, distanceValue) {
+        this.x = xValue;
+        this.y = yValue;
+        this.dir = directionValue;
+        this.distance = distanceValue;
+        this.hitBottom = false;
+    }
+
+    move(command) {
+        if (this.hitBottom) {
+            return;
+        }
+        if (command == movement.DOWN) {
+            this.y++;
+        } else if (command = movement.LEFT) {
+            this.x--;
+        } else if (command = movement.RIGHT) {
+            this.x++;
+        }
+    }
+
+    rotate() {
+        if (this.distance == 0 || this.hitBottom) {
+            return;
+        }
+        if (this.dir == direction.SOUTH) {
+            this.x = this.x + this.distance;
+            this.y = this.y - this.distance;
+            this.dir = direction.EAST;
+        } else if (this.dir == direction.EAST) {
+            this.x = this.x - this.distance;
+            this.y = this.y - this.distance;
+            this.dir = direction.NORTH;
+        } else if (this.dir == direction.NORTH) {
+            this.x = this.x - this.distance;
+            this.y = this.y + this.distance;
+            this.dir = direction.WEST;
+        } else {
+            this.x = this.x + this.distance;
+            this.y = this.y + this.distance;
+            this.dir = direction.SOUTH;
+        }
+    }
+
+    clone() {
+        return new GameBox(this.x, this.y, this.dir, this.distance);
+    }
+}
 
 class Square extends Component {
     constructor(props) {
@@ -54,7 +104,6 @@ class RichardsMiniGame extends Component {
         this.getBottomSquare_rotation_2_Coordinates = this.getBottomSquare_rotation_2_Coordinates.bind(this);
         this.getBottomSquare_rotation_3_Coordinates = this.getBottomSquare_rotation_3_Coordinates.bind(this);
 
-
         this.activateSquare = this.activateSquare.bind(this);
         this.activateBottomSquare = this.activateBottomSquare.bind(this);
 
@@ -63,12 +112,10 @@ class RichardsMiniGame extends Component {
         this.setNewBottomSquare_rotation_0 = this.setNewBottomSquare_rotation_0.bind(this);
         this.setNewBottomSquare_rotation_0 = this.setNewBottomSquare_rotation_0.bind(this);
 
-
         this.setBottomSquare_rotation_0 = this.setBottomSquare_rotation_0.bind(this);
         this.setBottomSquare_rotation_1 = this.setBottomSquare_rotation_1.bind(this);
         this.setBottomSquare_rotation_2 = this.setBottomSquare_rotation_2.bind(this);
         this.setBottomSquare_rotation_3 = this.setBottomSquare_rotation_3.bind(this);
-
 
         this.moveBottomSquare = this.moveBottomSquare.bind(this);
         this.checknextfieldactive = this.checknextfieldactive.bind(this);
@@ -76,7 +123,7 @@ class RichardsMiniGame extends Component {
         this.rotateBottomSquare = this.rotateBottomSquare.bind(this);
 
         this.RichardsMiniGame = [];
-        this.state = { currentShape: [], currentShape_rotation_1: [], currentShape_rotation_2: [], currentShape_rotation_3: [] };
+        this.state = { gameboxs: [], currentShape: [], currentShape_rotation_1: [], currentShape_rotation_2: [], currentShape_rotation_3: [] };
         this.bottom_square = { currentBottomSquare: [], currentBottomSquare_rotation_1: [], currentBottomSquare_rotation_2: [], currentBottomSquare_rotation_3: [] };
         for (let x = 0; x < Board_WIDTH; x++) {
             let rowRefs = [];
@@ -98,6 +145,8 @@ class RichardsMiniGame extends Component {
         return (
             <div className="Board">
                 <input type="button" value="Start" onClick={() => {
+                    let newShape = this.createRandomShape();
+
                     this.printNewShape_rotation_0(shapes.row_rotation_0);
                     this.setShape_rotation_1(shapes.row_rotation_1);
                     this.setShape_rotation_2(shapes.row_rotation_2);
@@ -167,6 +216,83 @@ class RichardsMiniGame extends Component {
             </div>
         )
     }
+
+    createRandomShape() {
+        // TODO implement random
+        return this.createIshape();
+    }
+
+    createIshape() {
+        let newShape = [];
+        newShape.push(new GameBox(4, 1, direction.NORTH, 1));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
+        newShape.push(new GameBox(4, 4, direction.SOUTH, 2));
+        return newShape;
+    }
+
+    createJshape() {
+        // TODO implement J Shape
+    }
+
+    update(command){
+
+        // den aktuellen spielstand lesen
+        let oldShapes = this.state.gameboxs;
+        let newShapes = [];
+        for(let i = 0; i< oldShapes.length; i++){
+            newShapes.push(oldShapes[i].clone());
+        }
+        for(let i = 0; i< newShapes.length; i++){
+            // if command === 'undefined' it is a rotate command
+            if(command === 'undefined'){
+                newShapes[i].rotate();
+            }else{
+                newShapes[i].move(command);
+            }
+        }
+        for(let i = 0; i< newShapes.length; i++){
+            // TODO evaluate result
+            // hat boden erreicht
+            // get über die wand hinaus
+        }
+
+        // TODO push new shape to state
+    }
+
+    addGameBoxesToState(newShape) {
+        let tmp_currentShape = [];
+        for (let i = 0; i < newShape.length; i++) {
+            this.activateSquare(newShape[i].x, newShape[i].y);
+            tmp_currentShape[i] = this.RichardsMiniGame[newShape[i].x][newShape[i].y].current;
+        }
+        this.setState({ gameboxs: tmp_currentShape });
+        // TODO push to current shape
+    }
+
+    updateGameBoxesToState(oldShapes, newShapes) {
+        for (let i = 0; i < Board_WIDTH; i++) {
+            for (let j = 0; j < Board_HEIGHT; j++) {
+                let old = this.getBoxByCoordinate(oldShapes, i, j);
+                let update = this.getBoxByCoordinate(newShapes, i, j);
+                if (old === 'undefined' && update !== 'undefined') {
+                    this.activateSquare(i, j);
+                } else if (old !== 'undefined' && update === 'undefined') {
+                    this.deactivateSqare(i, j);
+                }
+            }
+        }
+    }
+
+    getBoxByCoordinate(shapeList, x, y) {
+        for (let i; i < shapeList.length; i++) {
+            if (shapeList[i].x == x && shapeList[i].y == y) {
+                return shapeList[i];
+            }
+        }
+    }
+
+
 
     activateSquare(x, y) {
         this.RichardsMiniGame[x][y].current.setState({ active: true });
@@ -429,7 +555,7 @@ class RichardsMiniGame extends Component {
             if (x >= 0 && y >= 0 && x < DEADLINE_X && y < DEADLINE_Y) {
                 newCurrentShape[i] = this.RichardsMiniGame[x][y].current;
             }
-            else{console.log("Shape 0 is out of boarder")};
+            else { console.log("Shape 0 is out of boarder") };
         }
 
         //Move Current Shape Rotation 1
@@ -450,7 +576,7 @@ class RichardsMiniGame extends Component {
             if (x >= 0 && y >= 0 && x < DEADLINE_X && y < DEADLINE_Y) {
                 newCurrentShape_rotation_1[i] = this.RichardsMiniGame[x][y].current;
             }
-            else{console.log("Shape 1 is out of boarder")};
+            else { console.log("Shape 1 is out of boarder") };
         }
 
         //Move Current Shape Rotation 2
@@ -471,7 +597,7 @@ class RichardsMiniGame extends Component {
             if (x >= 0 && y >= 0 && x < DEADLINE_X && y < DEADLINE_Y) {
                 newCurrentShape_rotation_2[i] = this.RichardsMiniGame[x][y].current;
             }
-            else{console.log("Shape 2 is out of boarder")};
+            else { console.log("Shape 2 is out of boarder") };
         }
 
         //Move Current Shape Rotation 3
@@ -492,7 +618,7 @@ class RichardsMiniGame extends Component {
             if (x >= 0 && y >= 0 && x < DEADLINE_X && y < DEADLINE_Y) {
                 newCurrentShape_rotation_3[i] = this.RichardsMiniGame[x][y].current;
             }
-            else{console.log("Shape 3 is out of boarder")};
+            else { console.log("Shape 3 is out of boarder") };
         }
         //Clear all activate Shapes
         this.clear(this.getShape_rotation_0_Coordinates());
@@ -641,5 +767,11 @@ const shapes = {
     row_rotation_3: [{ x: 3, y: 3 }, { x: 4, y: 3 }, { x: 5, y: 3 }, { x: 6, y: 3 }],
     bottomsquare_rotation_3: [{ x: 4, y: 3 }],
 };
+
+const direction = { "NORTH": 1, "EAST": 2, "SOUTH": 3, "WEST": 4 }
+Object.freeze(direction);
+const movement = { "DOWN": 1, "LEFT": 2, "RIGHT": 3 }
+Object.freeze(movement);
+
 
 export default RichardsMiniGame;
