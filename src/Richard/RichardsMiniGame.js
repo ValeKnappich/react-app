@@ -7,6 +7,7 @@ const Board_WIDTH = 10;
 const DEADLINE_X = 9;
 const DEADLINE_Y = 19;
 let rotation = 0;
+let outofBorder = false;
 
 
 class Square extends Component {
@@ -33,13 +34,7 @@ class Square extends Component {
 class RichardsMiniGame extends Component {
     constructor() {
         super();
-        /*this.printShape_rotation_0 = this.printShape_rotation_0.bind(this);
-        this.printShape_rotation_1 = this.printShape_rotation_1.bind(this);
-        this.printShape_rotation_2 = this.printShape_rotation_2.bind(this);
-        this.printShape_rotation_3 = this.printShape_rotation_3.bind(this);*/
         this.printShape = this.printShape.bind(this);
-
-
         this.checkBorder = this.checkBorder.bind(this);
 
         this.printNewShape_rotation_0 = this.printNewShape_rotation_0.bind(this);
@@ -107,8 +102,6 @@ class RichardsMiniGame extends Component {
                     this.setShape_rotation_1(shapes.row_rotation_1);
                     this.setShape_rotation_2(shapes.row_rotation_2);
                     this.setShape_rotation_3(shapes.row_rotation_3);
-
-
                     this.setNewBottomSquare_rotation_0(shapes.bottomsquare_rotation_0);
                 }} />
                 <input type="button" value="Rotate" onClick={() => {
@@ -133,7 +126,6 @@ class RichardsMiniGame extends Component {
                 <input type="button" value="Down" onClick={() => {
                     if (this.checkBorder()) {
                         console.log(this.checkBorder());
-
                         if (!this.checknextfieldactive()) {
 
                             console.log(this.checknextfieldactive());
@@ -148,11 +140,24 @@ class RichardsMiniGame extends Component {
                     console.log(this.getShape_rotation_2_Coordinates());
                     console.log(this.getShape_rotation_3_Coordinates());
                 }} />
+                <input type="button" value="Print current Shape" onClick={() => {
+                    this.printShape(rotation);
+                }} />
+                <input type="button" value="Clear all Shapes" onClick={() => {
+                    this.clear(this.getShape_rotation_0_Coordinates());
+                    this.clear(this.getShape_rotation_1_Coordinates());
+                    this.clear(this.getShape_rotation_2_Coordinates());
+                    this.clear(this.getShape_rotation_3_Coordinates());
+                }} />
                 <input type="button" value="Print all CurrentShapes" onClick={() => {
                     this.clear(this.getShape_rotation_0_Coordinates());
                     this.clear(this.getShape_rotation_1_Coordinates());
                     this.clear(this.getShape_rotation_2_Coordinates());
                     this.clear(this.getShape_rotation_3_Coordinates());
+                    this.printShape(0);
+                    this.printShape(1);
+                    this.printShape(2);
+                    this.printShape(3);
                 }} />
 
 
@@ -246,43 +251,6 @@ class RichardsMiniGame extends Component {
 
     //Print and setBottomSquarefunction
 
-
-    /*printShape_rotation_0() {
-        let tmp_currentShape = [];
-        let shape = this.getShape_rotation_0_Coordinates();
-        for (let i = 0; i < this.state.currentShape.length; i++) {
-            this.activateSquare(shape[i].x, shape[i].y);
-            tmp_currentShape[i] = this.RichardsMiniGame[shape[i].x][shape[i].y].current;
-        }
-        this.setState({ currentShape: tmp_currentShape });
-    }
-    printShape_rotation_1() {
-        let tmp_currentShape = [];
-        let shape = this.getShape_rotation_1_Coordinates();
-        for (let i = 0; i < this.state.currentShape_rotation_1.length; i++) {
-            this.activateSquare(shape[i].x, shape[i].y);
-            tmp_currentShape[i] = this.RichardsMiniGame[shape[i].x][shape[i].y].current;
-        }
-        this.setState({ currentShape_rotation_1: tmp_currentShape });
-    }
-    printShape_rotation_2() {
-        let tmp_currentShape = [];
-        let shape = this.getShape_rotation_2_Coordinates();
-        for (let i = 0; i < this.state.currentShape_rotation_2.length; i++) {
-            this.activateSquare(shape[i].x, shape[i].y);
-            tmp_currentShape[i] = this.RichardsMiniGame[shape[i].x][shape[i].y].current;
-        }
-        this.setState({ currentShape_rotation_2: tmp_currentShape });
-    }
-    printShape_rotation_3() {
-        let tmp_currentShape = [];
-        let shape = this.getShape_rotation_3_Coordinates();
-        for (let i = 0; i < this.state.currentShape_rotation_3.length; i++) {
-            this.activateSquare(shape[i].x, shape[i].y);
-            tmp_currentShape[i] = this.RichardsMiniGame[shape[i].x][shape[i].y].current;
-        }
-        this.setState({ currentShape_rotation_3: tmp_currentShape });
-    }*/
     printShape(rotation) {
         switch (rotation) {
             case 0:
@@ -443,9 +411,6 @@ class RichardsMiniGame extends Component {
     moveShape(direction) {
         //this.moveBottomSquare(direction);
         let newCurrentShape = [];
-        let newCurrentShape_rotation_1 = [];
-        let newCurrentShape_rotation_2 = [];
-        let newCurrentShape_rotation_3 = [];
         console.log(rotation);
         console.log(direction);
         for (let i = 0; i < this.state.currentShape.length; i++) {
@@ -461,11 +426,14 @@ class RichardsMiniGame extends Component {
             if (direction === "down") {
                 y++;
             }
-            newCurrentShape[i] = this.RichardsMiniGame[x][y].current;
+            if (x >= 0 && y >= 0 && x < DEADLINE_X && y < DEADLINE_Y) {
+                newCurrentShape[i] = this.RichardsMiniGame[x][y].current;
+            }
+            else{console.log("Shape 0 is out of boarder")};
         }
 
         //Move Current Shape Rotation 1
-        let newCurrentShape_rotation_1 = []
+        let newCurrentShape_rotation_1 = [];
         for (let i = 0; i < this.state.currentShape_rotation_1.length; i++) {
             let square_rotation_1 = this.state.currentShape_rotation_1[i];
             let x = square_rotation_1.props.coordinatex;
@@ -479,11 +447,14 @@ class RichardsMiniGame extends Component {
             if (direction === "down") {
                 y++;
             }
-            newCurrentShape_rotation_1[i] = this.RichardsMiniGame[x][y].current;
+            if (x >= 0 && y >= 0 && x < DEADLINE_X && y < DEADLINE_Y) {
+                newCurrentShape_rotation_1[i] = this.RichardsMiniGame[x][y].current;
+            }
+            else{console.log("Shape 1 is out of boarder")};
         }
 
         //Move Current Shape Rotation 2
-        let newCurrentShape_rotation_2 = []
+        let newCurrentShape_rotation_2 = [];
         for (let i = 0; i < this.state.currentShape_rotation_2.length; i++) {
             let square_rotation_2 = this.state.currentShape_rotation_2[i];
             let x = square_rotation_2.props.coordinatex;
@@ -497,11 +468,14 @@ class RichardsMiniGame extends Component {
             if (direction === "down") {
                 y++;
             }
-            newCurrentShape_rotation_2[i] = this.RichardsMiniGame[x][y].current;
+            if (x >= 0 && y >= 0 && x < DEADLINE_X && y < DEADLINE_Y) {
+                newCurrentShape_rotation_2[i] = this.RichardsMiniGame[x][y].current;
+            }
+            else{console.log("Shape 2 is out of boarder")};
         }
 
         //Move Current Shape Rotation 3
-        let newCurrentShape_rotation_3 = []
+        let newCurrentShape_rotation_3 = [];
         for (let i = 0; i < this.state.currentShape_rotation_3.length; i++) {
             let square_rotation_3 = this.state.currentShape_rotation_3[i];
             let x = square_rotation_3.props.coordinatex;
@@ -515,7 +489,10 @@ class RichardsMiniGame extends Component {
             if (direction === "down") {
                 y++;
             }
-            newCurrentShape_rotation_3[i] = this.RichardsMiniGame[x][y].current;
+            if (x >= 0 && y >= 0 && x < DEADLINE_X && y < DEADLINE_Y) {
+                newCurrentShape_rotation_3[i] = this.RichardsMiniGame[x][y].current;
+            }
+            else{console.log("Shape 3 is out of boarder")};
         }
         //Clear all activate Shapes
         this.clear(this.getShape_rotation_0_Coordinates());
@@ -525,95 +502,6 @@ class RichardsMiniGame extends Component {
 
         //Set all States
         this.setState({ currentShape: newCurrentShape, currentShape_rotation_1: newCurrentShape_rotation_1, currentShape_rotation_2: newCurrentShape_rotation_2, currentShape_rotation_3: newCurrentShape_rotation_3 }, () => { this.printShape(rotation); });
-
-        /*let newCurrentShape = [];
-        let newCurrentShape_rotation_1 = [];
-        let newCurrentShape_rotation_2 = [];
-        let newCurrentShape_rotation_3 = [];
-        console.log(rotation);
-        console.log(direction);
-        // Move 0 rotation Shape
-        for (let i = 0; i < this.state.currentShape.length; i++) {
-            let square_rotation_0 = this.state.currentShape[i];
-            let x = square_rotation_0.props.coordinatex;
-            let y = square_rotation_0.props.coordinatey;
-            if (direction === "down") {
-                y++;
-            }
-            if (direction === "left") {
-                x--;
-            }
-            if (direction === "right") {
-                x++;
-            }
-            newCurrentShape[i] = this.RichardsMiniGame[x][y].current;
-        }
-        this.clear(this.getShape_rotation_0_Coordinates());
-
-        if (rotation === 0) {
-            this.setState({ currentShape: newCurrentShape }, this.printShape_rotation_0);
-            console.log("Set State and Print");
-        } else { this.setState({ currentShape: newCurrentShape }) }
-
-        // Move 1 rotation Shape
-        for (let i = 0; i < this.state.currentShape_rotation_1.length; i++) {
-            let square_rotation_1 = this.state.currentShape_rotation_1[i];
-            let x = square_rotation_1.props.coordinatex;
-            let y = square_rotation_1.props.coordinatey;
-            if (direction === "down") {
-                y++;
-            }
-            if (direction === "left") {
-                x--;
-            }
-            if (direction === "right") {
-                x++;
-            }
-            newCurrentShape_rotation_1[i] = this.RichardsMiniGame[x][y].current;
-        }
-        this.clear(this.getShape_rotation_1_Coordinates());
-
-        if (rotation === 1) {
-            this.setState({ currentShape: newCurrentShape_rotation_1 }, this.printShape_rotation_1);
-        } else { this.setState({ currentShape: newCurrentShape_rotation_1 }) }
-
-        // Move 2 rotation Shape
-        for (let i = 0; i < this.state.currentShape_rotation_2.length; i++) {
-            let square = this.state.currentShape_rotation_2[i];
-            let x = square.props.coordinatex;
-            let y = square.props.coordinatey;
-
-            if (direction === "down") {
-                y++;
-            }
-            if (direction === "left") {
-                x--;
-            }
-            if (direction === "right") {
-                x++;
-            }
-            newCurrentShape_rotation_2[i] = this.RichardsMiniGame[x][y].current;
-        }
-        this.clear(this.getShape_rotation_2_Coordinates());
-        this.setState({ currentShape_rotation_2: newCurrentShape_rotation_2 });
-        for (let i = 0; i < this.state.currentShape_rotation_3.length; i++) {
-            let square = this.state.currentShape_rotation_3[i];
-            let x = square.props.coordinatex;
-            let y = square.props.coordinatey;
-            if (direction === "down") {
-                y++;
-            }
-            if (direction === "left") {
-                x--;
-            }
-            if (direction === "right") {
-                x++;
-            }
-            newCurrentShape_rotation_3[i] = this.RichardsMiniGame[x][y].current;
-        }
-        this.clear(this.getShape_rotation_3_Coordinates());
-        this.setState({ currentShape_rotation_3: newCurrentShape_rotation_3 });
-    }*/
     }
 
     moveBottomSquare(direction) {
