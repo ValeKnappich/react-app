@@ -17,6 +17,9 @@ class GameBox {
         this.dir = directionValue;
         this.distance = distanceValue;
         this.hitBottom = false;
+        this.isEvaluated = false;
+        this.shapeChildren = [];
+        this.old;
     }
 
     move(command) {
@@ -56,7 +59,10 @@ class GameBox {
     }
 
     clone() {
-        return new GameBox(this.x, this.y, this.dir, this.distance);
+        const newBox = new GameBox(this.x, this.y, this.dir, this.distance);
+        newBox.hitBottom = this.hitBottom;
+        newBox.old = this;
+        return newBox;
     }
 }
 
@@ -123,7 +129,7 @@ class RichardsMiniGame extends Component {
         this.rotateBottomSquare = this.rotateBottomSquare.bind(this);
 
         this.RichardsMiniGame = [];
-        this.state = { gameboxs: [], currentShape: [], currentShape_rotation_1: [], currentShape_rotation_2: [], currentShape_rotation_3: [] };
+        this.state = { gameboard: this.initBoardLogic(), boxes: [], currentShape: [], currentShape_rotation_1: [], currentShape_rotation_2: [], currentShape_rotation_3: [] };
         this.bottom_square = { currentBottomSquare: [], currentBottomSquare_rotation_1: [], currentBottomSquare_rotation_2: [], currentBottomSquare_rotation_3: [] };
         for (let x = 0; x < Board_WIDTH; x++) {
             let rowRefs = [];
@@ -217,6 +223,14 @@ class RichardsMiniGame extends Component {
         )
     }
 
+    initBoardLogic() {
+        // inits the two dimensional game board array
+        let newBoard = [];
+        for (let i = 0; i < Board_WIDTH; i++) {
+            newBoard[i] = [];
+        }
+    }
+
     createRandomShape() {
         // TODO implement random
         return this.createIshape();
@@ -224,10 +238,30 @@ class RichardsMiniGame extends Component {
 
     createIshape() {
         let newShape = [];
-        newShape.push(new GameBox(4, 1, direction.NORTH, 1));
-        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
-        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
-        newShape.push(new GameBox(4, 4, direction.SOUTH, 2));
+        const b1 = new GameBox(4, 1, direction.NORTH, 1);
+        const b2 = new GameBox(4, 2, direction.NORTH, 0);
+        const b3 = new GameBox(4, 3, direction.SOUTH, 1);
+        const b4 = new GameBox(4, 4, direction.SOUTH, 2);
+        b1.shapeChildren.push(b2);
+        b1.shapeChildren.push(b3);
+        b1.shapeChildren.push(b4);
+
+        b2.shapeChildren.push(b1);
+        b2.shapeChildren.push(b3);
+        b2.shapeChildren.push(b4);
+
+        b3.shapeChildren.push(b1);
+        b3.shapeChildren.push(b2);
+        b3.shapeChildren.push(b4);
+
+        b4.shapeChildren.push(b1);
+        b4.shapeChildren.push(b2);
+        b4.shapeChildren.push(b3);
+
+        newShape.push(b1);
+        newShape.push(b2);
+        newShape.push(b3);
+        newShape.push(b4);
         return newShape;
     }
 
@@ -235,27 +269,112 @@ class RichardsMiniGame extends Component {
         // TODO implement J Shape
     }
 
-    update(command){
-
-        // den aktuellen spielstand lesen
-        let oldShapes = this.state.gameboxs;
-        let newShapes = [];
-        for(let i = 0; i< oldShapes.length; i++){
-            newShapes.push(oldShapes[i].clone());
+    evaluate(command, gameboard, boxes) {
+        for (let i = 0; i < boxes.length; i++) {
+            const box = boxes[i];
+            this.evaluateBox(command, gameboard, box);
         }
-        for(let i = 0; i< newShapes.length; i++){
-            // if command === 'undefined' it is a rotate command
-            if(command === 'undefined'){
-                newShapes[i].rotate();
-            }else{
-                newShapes[i].move(command);
+    }
+
+    evaluateBox(command, gameboard, box) {
+        // do nothing if it is already evaluated
+        if (box.isEvaluated) {
+            continue;
+        }
+
+        // evaluate all boxes of a shape
+        const boxList = box.shapeChildren;
+        let actionSuccess = true;
+        let bottomHit = false;
+        let newChildren = [];
+        for (let j = 0; j < boxList.length; j++) {
+            const child = boxList[j];
+
+            // do not evaluate if is already evaluated
+            if (child.isEvaluated) {
+                continue;
+            }
+
+            const childClone = child.clone();
+
+            // Do action
+            if (command === 'undefined') {
+                childClone.rotate();
+            } else {
+                childClone.move(command);
+            }
+
+            // if the clone hits the bottom or the next boxs is already on the bottom 
+            if (childClone.y == Board_HEIGHT - 1 || gameboard[childClone.x][childClone.y + 1] !== 'undefined' && gameboard[childClone.x][childClone.y + 1].hitBottom) {
+                bottomHit = true;
+            }
+
+            // if the clone hit something or is out of bounds
+            if (childClone.x < 0 || childClone.y < 0 || childClone.y == Board_WIDTH - 1 || gameboard[childClone.x][childClone.y] !== 'undefined') {
+
+                // evaluate box which is in the way, to make sure that it is already updated
+                evaluateBox(command, gameboard, gameboard[childClone.x][childClone.y]);
+                if (gameboard[childClone.x][childClone.y] !== 'undefined') {
+                    actionSuccess = false;
+                    break;
+                }
+            }
+
+            // Mark as evaluated and remember in array
+            childClone.isEvaluated = true;
+            newChildren.push(childClone);
+        }
+
+        // if evaluation failed, do nothing
+        if (actionSuccess == false) {
+            continue;
+        }
+
+        // shape hit bottom and set hitBottom for all true
+        if (bottomHit) {
+            for (let j = 0; j < newChildren.length; j++) {
+                newChildren[j].hitBottom = true;
             }
         }
-        for(let i = 0; i< newShapes.length; i++){
-            // TODO evaluate result
-            // hat boden erreicht
-            // get über die wand hinaus
+
+        // update values of the old boxes with the new values from the evaluation
+        for (let j = 0; j < newChildren.length; j++) {
+            const newChild = newChildren[j];
+            const oldChild = newChild.old;
+            oldChild.x = newChild.x;
+            oldChild.y = newChild.y;
+            oldChild.hitBottom = newChild.hitBottom;
+            oldChild.isEvaluated = true;
         }
+    }
+
+    update(command, newBoxes) {
+
+        // den aktuellen spielstand lesen
+        let currentBoard = this.state.gameboard;
+        let boxes = this.state.boxes;
+
+        if(newBoard !== 'undefined'){
+            for (let i = 0; i < newBoxes.length; i++) {
+                const element = newBoxesboxes.push(element);[i];
+                boxes.push(element);
+            }
+        }
+
+        // copy board
+        let newBoard = [];
+        for (let x = 0; x < currentBoard.length; x++) {
+            const column = currentBoard[x];
+            newBoard = [];
+            for (let y = 0; y < column.length; y++) {
+                const cell = column[y];
+                cell.isEvaluated = false;
+                newBoard[x][y] = cell;
+            }
+        }
+        this.evaluate(command, newBoard, boxes);
+
+        // TODO update ui loop implementieren
 
         // TODO push new shape to state
     }
@@ -266,7 +385,7 @@ class RichardsMiniGame extends Component {
             this.activateSquare(newShape[i].x, newShape[i].y);
             tmp_currentShape[i] = this.RichardsMiniGame[newShape[i].x][newShape[i].y].current;
         }
-        this.setState({ gameboxs: tmp_currentShape });
+        this.setState({ gameboard: tmp_currentShape });
         // TODO push to current shape
     }
 
@@ -291,7 +410,6 @@ class RichardsMiniGame extends Component {
             }
         }
     }
-
 
 
     activateSquare(x, y) {
