@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './style.css';
 
-const Board_HEIGHT = 20;
+const Board_HEIGHT = 10;
 const Board_WIDTH = 10;
 const DEADLINE_X = 9;
 const DEADLINE_Y = 19;
 let rotation = 0;
-let outofBorder = false;
 
 class GameBox {
 
@@ -28,9 +27,9 @@ class GameBox {
         }
         if (command == movement.DOWN) {
             this.y++;
-        } else if (command = movement.LEFT) {
+        } else if (command == movement.LEFT) {
             this.x--;
-        } else if (command = movement.RIGHT) {
+        } else if (command == movement.RIGHT) {
             this.x++;
         }
     }
@@ -223,60 +222,79 @@ class RichardsMiniGame extends Component {
         // TODO implement J Shape
     }
 
-    evaluate(command, gameboard, boxes) {
-        for (let i = 0; i < boxes.length; i++) {
-            const box = boxes[i];
-            this.evaluateBox(command, gameboard, box);
-        }
+    orderBoxes(boxes, command) {
+        return boxes.sort((a, b) => {
+            if (command == null) {
+                if (a.x > b.x) return -1;
+                if (a.x < b.x) return 1;
+                if (a.y > b.y) return -1;
+                if (a.y > b.y) return 1;
+                return 0;
+            }
+            else if (command == movement.LEFT) {
+                if (a.x < b.x) return 1;
+                if (a.x > b.x) return -1;
+                if (a.y > b.y) return 1;
+                if (a.y < b.y) return -1;
+                return 0;
+            }
+            else if (command == movement.DOWN) {
+                if (a.y > b.y) return -1;
+                if (a.y < b.y) return 1;
+                if (a.x < b.x) return -1;
+                if (a.x > b.x) return 1;
+                return 0;
+            }
+            else {
+                if (a.x > b.x) return -1;
+                if (a.x < b.x) return 1;
+                if (a.y > b.y) return -1;
+                if (a.y < b.y) return 1;
+                return 0;
+            }
+        });
     }
 
-    evaluateBox(command, gameboard, box) {
-        // do nothing if it is already evaluated
-        if (box.isEvaluated) {
-            return;
-        }
-
-        // evaluate all boxes of a shape
-        const boxList = box.shapeChildren;
+    evaluate(command, gameboard, boxes) {
+        let orderedBoxes = this.orderBoxes(boxes, command);
         let actionSuccess = true;
         let bottomHit = false;
         let newChildren = [];
-        for (let j = 0; j < boxList.length; j++) {
-            const child = boxList[j];
+        for (let i = 0; i < orderedBoxes.length; i++) {
+            const box = orderedBoxes[i];
 
             // do not evaluate if is already evaluated
-            if (child.isEvaluated) {
+            if (box.isEvaluated || box.hitBottom) {
                 continue;
             }
 
-            const childClone = child.clone();
+            const childClone = box.clone();
 
             // Do action
-            if (command === 'undefined') {
+            if (command == null) {
                 childClone.rotate();
             } else {
                 childClone.move(command);
             }
 
-            // if the clone hits the bottom or the next boxs is already on the bottom 
-
-            console.log({
-                childClone: childClone,
-                gameboard: gameboard
-            });
-            if (childClone.y == Board_HEIGHT - 1 || gameboard[childClone.x][childClone.y + 1] != null && gameboard[childClone.x][childClone.y + 1].hitBottom) {
-                bottomHit = true;
+            // if the clone hit something or is out of bounds
+            if (childClone.x < 0 || childClone.y < 0 || childClone.x == Board_WIDTH) {
+                actionSuccess = false;
+                break;
             }
 
-            // if the clone hit something or is out of bounds
-            if (childClone.x < 0 || childClone.y < 0 || childClone.y == Board_WIDTH - 1 || gameboard[childClone.x][childClone.y] != null) {
-
-                // evaluate box which is in the way, to make sure that it is already updated
-                this.evaluateBox(command, gameboard, gameboard[childClone.x][childClone.y]);
-                if (gameboard[childClone.x][childClone.y] != null) {
+            if (gameboard[childClone.x][childClone.y] != null) {
+                let otherClone = newChildren.find(x => gameboard[childClone.x][childClone.y] == x.old);
+                if (otherClone == null || (otherClone.x == childClone.x && otherClone.y == childClone.y) || gameboard[childClone.x][childClone.y] !== childClone.old) {
+                    // evaluate box which is in the way, to make sure that it is already updated
                     actionSuccess = false;
                     break;
                 }
+            }
+
+            // if the clone hits the bottom or the next boxs is already on the bottom 
+            if (childClone.y == Board_HEIGHT - 1 || (gameboard[childClone.x][childClone.y + 1] != null && gameboard[childClone.x][childClone.y + 1].hitBottom)) {
+                bottomHit = true;
             }
 
             // Mark as evaluated and remember in array
@@ -290,12 +308,20 @@ class RichardsMiniGame extends Component {
         }
 
         // shape hit bottom and set hitBottom for all true
-        if (bottomHit) {
-            for (let j = 0; j < newChildren.length; j++) {
-                newChildren[j].hitBottom = true;
-            }
+        if (bottomHit == true) {
+            this.markAllAsBottomHit(newChildren);
         }
+        this.overrideOriginalsWithValues(newChildren);
+    }
 
+    markAllAsBottomHit(newChildren) {
+        console.log({ text: "hit bottom func", newBoxes: newChildren })
+        for (let j = 0; j < newChildren.length; j++) {
+            newChildren[j].hitBottom = true;
+        }
+    }
+
+    overrideOriginalsWithValues(newChildren) {
         // update values of the old boxes with the new values from the evaluation
         for (let j = 0; j < newChildren.length; j++) {
             const newChild = newChildren[j];
@@ -304,119 +330,56 @@ class RichardsMiniGame extends Component {
             oldChild.y = newChild.y;
             oldChild.hitBottom = newChild.hitBottom;
             oldChild.isEvaluated = true;
+            oldChild.dir = newChild.dir;
         }
     }
 
     update(command, newBoxes) {
-
-        // read the current game state
         let currentBoard = this.state.gameboard;
         let boxes = this.state.boxes;
+        /*
         console.log({
-            currentBoard: currentBoard,
+            text: "update call info",
             boxes: boxes,
             command: command,
             newBoxes: newBoxes
         });
-
-        // copy board
-        let newBoard = [];
-        for (let x = 0; x < currentBoard.length; x++) {
-            const column = currentBoard[x];
-            newBoard[x] = [];
-            for (let y = 0; y < column.length; y++) {
-                const cell = column[y];
-                console.log({
-                    column: column,
-                    cell: cell,
-                    y:y
-                })
-                if (cell != null) {
-                    cell.isEvaluated = false;
-                    newBoard[x][y] = cell;
-                }
-            }
-        }
-
+        */
         if (newBoxes != null) {
             for (let i = 0; i < newBoxes.length; i++) {
                 const element = newBoxes[i];
                 boxes.push(element);
             }
-            for (let i = 0; i < boxes.length; i++) {
-                const box = boxes[i];
-                newBoard[box.x][box.y] = box;
-            }
         } else {
-            this.evaluate(command, newBoard, boxes);
+            this.evaluate(command, this.createGameBoardOfBoxes(boxes), boxes);
         }
 
-        // TODO update ui loop implementieren
-
-        console.log({ boardwidth: currentBoard.length })
-        for (let x = 0; x < currentBoard.length; x++) {
-            const column = currentBoard[x];
-            console.log({ boardheight: column.length })
+        let newBoard = this.createGameBoardOfBoxes(boxes);
+        for (let x = 0; x < newBoard.length; x++) {
+            const column = newBoard[x];
             for (let y = 0; y < column.length; y++) {
                 const cell = column[y];
-                console.log({
-                    cell: cell,
-                    newCell: newBoard[x][y]
-                })
-                if (newBoard[x][y] != null || newBoard[x][y] === null) {
-                    cell = newBoard[x][y];
+                if (cell != null) {
                     this.activateSquare(x, y);
                 } else {
-                    cell = null;
                     this.deactivateSqare(x, y);
                 }
             }
         }
-
-        // TODO push new shape to state
-        this.setState({ boxes: boxes, gameboard: currentBoard });
+        this.setState({ boxes: boxes });
     }
 
-    addGameBoxesToState(newShape) {
-        let tmp_currentShape = [];
-        for (let i = 0; i < newShape.length; i++) {
-            this.activateSquare(newShape[i].x, newShape[i].y);
-            tmp_currentShape[i] = this.RichardsMiniGame[newShape[i].x][newShape[i].y].current;
+    createGameBoardOfBoxes(boxes) {
+        let newBoard = this.initBoardLogic();
+        for (let i = 0; i < boxes.length; i++) {
+            const box = boxes[i];
+            newBoard[box.x][box.y] = box;
+            boxes[i].isEvaluated = false;
         }
-        this.setState({ gameboard: tmp_currentShape });
-        // TODO push to current shape
+        return newBoard;
     }
-
-    updateGameBoxesToState(oldShapes, newShapes) {
-        for (let i = 0; i < Board_WIDTH; i++) {
-            for (let j = 0; j < Board_HEIGHT; j++) {
-                let old = this.getBoxByCoordinate(oldShapes, i, j);
-                let update = this.getBoxByCoordinate(newShapes, i, j);
-                if (old === 'undefined' && update != null) {
-                    this.activateSquare(i, j);
-                } else if (old != null && update === 'undefined') {
-                    this.deactivateSqare(i, j);
-                }
-            }
-        }
-    }
-
-    getBoxByCoordinate(shapeList, x, y) {
-        for (let i; i < shapeList.length; i++) {
-            if (shapeList[i].x == x && shapeList[i].y == y) {
-                return shapeList[i];
-            }
-        }
-    }
-
 
     activateSquare(x, y) {
-        console.log({
-            minigame: this.RichardsMiniGame,
-            element: this.RichardsMiniGame[x][y],
-            current: this.RichardsMiniGame[x][y].current
-        })
-
         this.RichardsMiniGame[x][y].current.setState({ active: true });
     }
 
