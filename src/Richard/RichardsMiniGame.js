@@ -19,7 +19,7 @@ class GameBox {
         this.hitBottom = false;
         this.isEvaluated = false;
         this.shapeChildren = [];
-        this.old;
+        this.old = [];
     }
 
     move(command) {
@@ -151,68 +151,19 @@ class RichardsMiniGame extends Component {
         return (
             <div className="Board">
                 <input type="button" value="Start" onClick={() => {
-                    let newShape = this.createRandomShape();
-
-                    this.printNewShape_rotation_0(shapes.row_rotation_0);
-                    this.setShape_rotation_1(shapes.row_rotation_1);
-                    this.setShape_rotation_2(shapes.row_rotation_2);
-                    this.setShape_rotation_3(shapes.row_rotation_3);
-                    this.setNewBottomSquare_rotation_0(shapes.bottomsquare_rotation_0);
+                    this.update(null, this.createRandomShape());
                 }} />
                 <input type="button" value="Rotate" onClick={() => {
-                    this.rotateShape();
+                    this.update();
                 }} />
                 <input type="button" value="Left" onClick={() => {
-                    if (this.checkBorder()) {
-                        if (!this.checknextfieldactive()) {
-                            this.moveShape("left");
-                            console.log("Move left");
-                            console.log(rotation);
-                        }
-                    }
+                    this.update(movement.LEFT);
                 }} />
                 <input type="button" value="Right" onClick={() => {
-                    if (this.checkBorder()) {
-                        if (!this.checknextfieldactive()) {
-                            this.moveShape("right");
-                        }
-                    }
+                    this.update(movement.RIGHT);
                 }} />
                 <input type="button" value="Down" onClick={() => {
-                    if (this.checkBorder()) {
-                        console.log(this.checkBorder());
-                        if (!this.checknextfieldactive()) {
-
-                            console.log(this.checknextfieldactive());
-
-                            this.moveShape("down");
-                        }
-                    }
-                }} />
-                <input type="button" value="Coorinates Console" onClick={() => {
-                    console.log(this.getShape_rotation_0_Coordinates());
-                    console.log(this.getShape_rotation_1_Coordinates());
-                    console.log(this.getShape_rotation_2_Coordinates());
-                    console.log(this.getShape_rotation_3_Coordinates());
-                }} />
-                <input type="button" value="Print current Shape" onClick={() => {
-                    this.printShape(rotation);
-                }} />
-                <input type="button" value="Clear all Shapes" onClick={() => {
-                    this.clear(this.getShape_rotation_0_Coordinates());
-                    this.clear(this.getShape_rotation_1_Coordinates());
-                    this.clear(this.getShape_rotation_2_Coordinates());
-                    this.clear(this.getShape_rotation_3_Coordinates());
-                }} />
-                <input type="button" value="Print all CurrentShapes" onClick={() => {
-                    this.clear(this.getShape_rotation_0_Coordinates());
-                    this.clear(this.getShape_rotation_1_Coordinates());
-                    this.clear(this.getShape_rotation_2_Coordinates());
-                    this.clear(this.getShape_rotation_3_Coordinates());
-                    this.printShape(0);
-                    this.printShape(1);
-                    this.printShape(2);
-                    this.printShape(3);
+                    this.update(movement.DOWN);
                 }} />
 
 
@@ -228,7 +179,10 @@ class RichardsMiniGame extends Component {
         let newBoard = [];
         for (let i = 0; i < Board_WIDTH; i++) {
             newBoard[i] = [];
+            newBoard[i][Board_HEIGHT] = null;
+            newBoard[i].pop();
         }
+        return newBoard;
     }
 
     createRandomShape() {
@@ -279,7 +233,7 @@ class RichardsMiniGame extends Component {
     evaluateBox(command, gameboard, box) {
         // do nothing if it is already evaluated
         if (box.isEvaluated) {
-            continue;
+            return;
         }
 
         // evaluate all boxes of a shape
@@ -305,16 +259,21 @@ class RichardsMiniGame extends Component {
             }
 
             // if the clone hits the bottom or the next boxs is already on the bottom 
-            if (childClone.y == Board_HEIGHT - 1 || gameboard[childClone.x][childClone.y + 1] !== 'undefined' && gameboard[childClone.x][childClone.y + 1].hitBottom) {
+
+            console.log({
+                childClone: childClone,
+                gameboard: gameboard
+            });
+            if (childClone.y == Board_HEIGHT - 1 || gameboard[childClone.x][childClone.y + 1] != null && gameboard[childClone.x][childClone.y + 1].hitBottom) {
                 bottomHit = true;
             }
 
             // if the clone hit something or is out of bounds
-            if (childClone.x < 0 || childClone.y < 0 || childClone.y == Board_WIDTH - 1 || gameboard[childClone.x][childClone.y] !== 'undefined') {
+            if (childClone.x < 0 || childClone.y < 0 || childClone.y == Board_WIDTH - 1 || gameboard[childClone.x][childClone.y] != null) {
 
                 // evaluate box which is in the way, to make sure that it is already updated
-                evaluateBox(command, gameboard, gameboard[childClone.x][childClone.y]);
-                if (gameboard[childClone.x][childClone.y] !== 'undefined') {
+                this.evaluateBox(command, gameboard, gameboard[childClone.x][childClone.y]);
+                if (gameboard[childClone.x][childClone.y] != null) {
                     actionSuccess = false;
                     break;
                 }
@@ -327,7 +286,7 @@ class RichardsMiniGame extends Component {
 
         // if evaluation failed, do nothing
         if (actionSuccess == false) {
-            continue;
+            return;
         }
 
         // shape hit bottom and set hitBottom for all true
@@ -350,33 +309,72 @@ class RichardsMiniGame extends Component {
 
     update(command, newBoxes) {
 
-        // den aktuellen spielstand lesen
+        // read the current game state
         let currentBoard = this.state.gameboard;
         let boxes = this.state.boxes;
-
-        if(newBoard !== 'undefined'){
-            for (let i = 0; i < newBoxes.length; i++) {
-                const element = newBoxesboxes.push(element);[i];
-                boxes.push(element);
-            }
-        }
+        console.log({
+            currentBoard: currentBoard,
+            boxes: boxes,
+            command: command,
+            newBoxes: newBoxes
+        });
 
         // copy board
         let newBoard = [];
         for (let x = 0; x < currentBoard.length; x++) {
             const column = currentBoard[x];
-            newBoard = [];
+            newBoard[x] = [];
             for (let y = 0; y < column.length; y++) {
                 const cell = column[y];
-                cell.isEvaluated = false;
-                newBoard[x][y] = cell;
+                console.log({
+                    column: column,
+                    cell: cell,
+                    y:y
+                })
+                if (cell != null) {
+                    cell.isEvaluated = false;
+                    newBoard[x][y] = cell;
+                }
             }
         }
-        this.evaluate(command, newBoard, boxes);
+
+        if (newBoxes != null) {
+            for (let i = 0; i < newBoxes.length; i++) {
+                const element = newBoxes[i];
+                boxes.push(element);
+            }
+            for (let i = 0; i < boxes.length; i++) {
+                const box = boxes[i];
+                newBoard[box.x][box.y] = box;
+            }
+        } else {
+            this.evaluate(command, newBoard, boxes);
+        }
 
         // TODO update ui loop implementieren
 
+        console.log({ boardwidth: currentBoard.length })
+        for (let x = 0; x < currentBoard.length; x++) {
+            const column = currentBoard[x];
+            console.log({ boardheight: column.length })
+            for (let y = 0; y < column.length; y++) {
+                const cell = column[y];
+                console.log({
+                    cell: cell,
+                    newCell: newBoard[x][y]
+                })
+                if (newBoard[x][y] != null || newBoard[x][y] === null) {
+                    cell = newBoard[x][y];
+                    this.activateSquare(x, y);
+                } else {
+                    cell = null;
+                    this.deactivateSqare(x, y);
+                }
+            }
+        }
+
         // TODO push new shape to state
+        this.setState({ boxes: boxes, gameboard: currentBoard });
     }
 
     addGameBoxesToState(newShape) {
@@ -394,9 +392,9 @@ class RichardsMiniGame extends Component {
             for (let j = 0; j < Board_HEIGHT; j++) {
                 let old = this.getBoxByCoordinate(oldShapes, i, j);
                 let update = this.getBoxByCoordinate(newShapes, i, j);
-                if (old === 'undefined' && update !== 'undefined') {
+                if (old === 'undefined' && update != null) {
                     this.activateSquare(i, j);
-                } else if (old !== 'undefined' && update === 'undefined') {
+                } else if (old != null && update === 'undefined') {
                     this.deactivateSqare(i, j);
                 }
             }
@@ -413,6 +411,12 @@ class RichardsMiniGame extends Component {
 
 
     activateSquare(x, y) {
+        console.log({
+            minigame: this.RichardsMiniGame,
+            element: this.RichardsMiniGame[x][y],
+            current: this.RichardsMiniGame[x][y].current
+        })
+
         this.RichardsMiniGame[x][y].current.setState({ active: true });
     }
 
