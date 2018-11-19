@@ -13,7 +13,6 @@ class GameBox {
         this.distance = distanceValue;
         this.hitBottom = false;
         this.isEvaluated = false;
-        this.shapeChildren = [];
         this.old = [];
     }
 
@@ -85,10 +84,6 @@ class Square extends Component {
 class RichardsMiniGame extends Component {
     constructor() {
         super();
-        /*
-        this.activateSquare = this.activateSquare.bind(this);
-        this.deactivateSqare = this.deactivateSqare.bind(this);
-        */
         this.RichardsMiniGame = [];
         this.state = { boxes: [] };
         for (let x = 0; x < Board_WIDTH; x++) {
@@ -125,8 +120,6 @@ class RichardsMiniGame extends Component {
                 <input type="button" value="Down" onClick={() => {
                     this.update(movement.DOWN);
                 }} />
-
-
                 <header className="Board-header">
                     {RichardsMiniGame}
                 </header>
@@ -147,40 +140,61 @@ class RichardsMiniGame extends Component {
 
     createRandomShape() {
         // TODO implement random
-        return this.createIshape();
+        return this.createTshape();
     }
 
     createIshape() {
         let newShape = [];
-        const b1 = new GameBox(4, 1, direction.NORTH, 1);
-        const b2 = new GameBox(4, 2, direction.NORTH, 0);
-        const b3 = new GameBox(4, 3, direction.SOUTH, 1);
-        const b4 = new GameBox(4, 4, direction.SOUTH, 2);
-        b1.shapeChildren.push(b2);
-        b1.shapeChildren.push(b3);
-        b1.shapeChildren.push(b4);
-
-        b2.shapeChildren.push(b1);
-        b2.shapeChildren.push(b3);
-        b2.shapeChildren.push(b4);
-
-        b3.shapeChildren.push(b1);
-        b3.shapeChildren.push(b2);
-        b3.shapeChildren.push(b4);
-
-        b4.shapeChildren.push(b1);
-        b4.shapeChildren.push(b2);
-        b4.shapeChildren.push(b3);
-
-        newShape.push(b1);
-        newShape.push(b2);
-        newShape.push(b3);
-        newShape.push(b4);
+        newShape.push(new GameBox(4, 1, direction.NORTH, 1));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
+        newShape.push(new GameBox(4, 4, direction.SOUTH, 2));
         return newShape;
     }
 
     createJshape() {
-        // TODO implement J Shape
+        let newShape = [];
+        newShape.push(new GameBox(5, 2, direction.EAST, 1));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
+        newShape.push(new GameBox(4, 4, direction.SOUTH, 2));
+        return newShape;
+    }
+
+    createTshape() {
+        let newShape = [];
+        newShape.push(new GameBox(4, 1, direction.NORTH, 1));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
+        newShape.push(new GameBox(5, 2, direction.EAST, 1));
+        return newShape;
+    }
+
+    createLshape() {
+        let newShape = [];
+        newShape.push(new GameBox(3, 2, direction.WEST, 1));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
+        newShape.push(new GameBox(4, 4, direction.SOUTH, 2));
+        return newShape;
+    }
+
+    createSshape() {
+        let newShape = [];
+        newShape.push(new GameBox(5, 2, direction.EAST, 1));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
+        newShape.push(new GameBox(3, 3, direction.WEST, 1));
+        return newShape;
+    }
+
+    createOshape() {
+        let newShape = [];
+        newShape.push(new GameBox(5, 2, direction.EAST, 1));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
+        newShape.push(new GameBox(5, 3, direction.WEST, 1));
+        return newShape;
     }
 
     orderBoxes(boxes, command) {
