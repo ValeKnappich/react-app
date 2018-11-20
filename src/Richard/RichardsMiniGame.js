@@ -7,13 +7,16 @@ const Board_WIDTH = 10;
 const direction = { "NORTH": 1, "EAST": 2, "SOUTH": 3, "WEST": 4 }
 const movement = { "DOWN": 1, "LEFT": 2, "RIGHT": 3 }
 const rotationType = { "AXIS": 1, "DIAGONAL": 2 }
+const colors = { "I": "grayBox", "J": "greenBox", "L": "blueBox", "O": "yellowBox", "Z": "cyanBox", "T": "redBox", "S": "pinkBox", "BLANK": "whiteBox" }
+const defaultSquareClass = "square";
 Object.freeze(direction);
 Object.freeze(movement);
 Object.freeze(rotationType);
+Object.freeze(colors);
 
 class GameBox {
 
-    constructor(xValue, yValue, directionValue, distanceValue) {
+    constructor(xValue, yValue, directionValue, distanceValue, colorValue) {
         this.x = xValue;
         this.y = yValue;
         this.dir = directionValue;
@@ -21,23 +24,24 @@ class GameBox {
         this.hitBottom = false;
         this.old = [];
         this.rotation = rotationType.AXIS;
+        this.color = colorValue;
     }
 
     move(command) {
         if (this.hitBottom) {
             return;
         }
-        if (command == movement.DOWN) {
+        if (command === movement.DOWN) {
             this.y++;
-        } else if (command == movement.LEFT) {
+        } else if (command === movement.LEFT) {
             this.x--;
-        } else if (command == movement.RIGHT) {
+        } else if (command === movement.RIGHT) {
             this.x++;
         }
     }
 
     rotate() {
-        if (this.distance == 0 || this.hitBottom) {
+        if (this.distance === 0 || this.hitBottom) {
             return;
         }
         switch (this.rotation) {
@@ -97,7 +101,7 @@ class GameBox {
     }
 
     clone() {
-        const newBox = new GameBox(this.x, this.y, this.dir, this.distance);
+        const newBox = new GameBox(this.x, this.y, this.dir, this.distance, this.color);
         newBox.hitBottom = this.hitBottom;
         newBox.old = this;
         newBox.rotation = this.rotation;
@@ -112,15 +116,15 @@ class Square extends Component {
             value: null,
             active: false,
             bottom: false,
+            style: defaultSquareClass + " " + colors.BLANK,
             coordinatex: this.props.coordinatex,
             coordinatey: this.props.coordinatey,
         };
     }
     render() {
         return (<button
-            className="square"
             id={this.props.id}
-            style={{ background: this.state.active ? "red" : "white" }}>
+            className={this.state.style}>
             {this.state.value}
         </button>);
     }
@@ -233,46 +237,46 @@ class RichardsMiniGame extends Component {
 
     createIshape() {
         let newShape = [];
-        newShape.push(new GameBox(4, 1, direction.NORTH, 1));
-        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
-        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
-        newShape.push(new GameBox(4, 4, direction.SOUTH, 2));
+        newShape.push(new GameBox(4, 1, direction.NORTH, 1, colors.I));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0, colors.I));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1, colors.I));
+        newShape.push(new GameBox(4, 4, direction.SOUTH, 2, colors.I));
         return newShape;
     }
 
     createJshape() {
         let newShape = [];
-        newShape.push(new GameBox(5, 2, direction.EAST, 1));
-        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
-        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
-        newShape.push(new GameBox(4, 4, direction.SOUTH, 2));
+        newShape.push(new GameBox(5, 2, direction.EAST, 1, colors.J));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0, colors.J));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1, colors.J));
+        newShape.push(new GameBox(4, 4, direction.SOUTH, 2, colors.J));
         return newShape;
     }
 
     createTshape() {
         let newShape = [];
-        newShape.push(new GameBox(4, 1, direction.NORTH, 1));
-        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
-        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
-        newShape.push(new GameBox(5, 2, direction.EAST, 1));
+        newShape.push(new GameBox(4, 1, direction.NORTH, 1, colors.T));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0, colors.T));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1, colors.T));
+        newShape.push(new GameBox(5, 2, direction.EAST, 1, colors.T));
         return newShape;
     }
 
     createLshape() {
         let newShape = [];
-        newShape.push(new GameBox(3, 2, direction.WEST, 1));
-        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
-        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
-        newShape.push(new GameBox(4, 4, direction.SOUTH, 2));
+        newShape.push(new GameBox(3, 2, direction.WEST, 1, colors.L));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0, colors.L));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1, colors.L));
+        newShape.push(new GameBox(4, 4, direction.SOUTH, 2, colors.L));
         return newShape;
     }
 
     createSshape() {
         let newShape = [];
-        newShape.push(new GameBox(5, 2, direction.EAST, 1));
-        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
-        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
-        const box = new GameBox(3, 3, direction.SOUTH, 1);
+        newShape.push(new GameBox(5, 2, direction.EAST, 1, colors.S));
+        newShape.push(new GameBox(4, 2, direction.NORTH, 0, colors.S));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 1, colors.S));
+        const box = new GameBox(3, 3, direction.SOUTH, 1, colors.S);
         box.rotation = rotationType.DIAGONAL;
         newShape.push(box);
         return newShape;
@@ -280,10 +284,10 @@ class RichardsMiniGame extends Component {
 
     createOshape() {
         let newShape = [];
-        newShape.push(new GameBox(5, 2, direction.SOUTH, 0));
-        newShape.push(new GameBox(4, 2, direction.SOUTH, 0));
-        newShape.push(new GameBox(4, 3, direction.SOUTH, 0));
-        newShape.push(new GameBox(5, 3, direction.SOUTH, 0));
+        newShape.push(new GameBox(5, 2, direction.SOUTH, 0, colors.O));
+        newShape.push(new GameBox(4, 2, direction.SOUTH, 0, colors.O));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 0, colors.O));
+        newShape.push(new GameBox(5, 3, direction.SOUTH, 0, colors.O));
         return newShape;
     }
 
@@ -297,7 +301,7 @@ class RichardsMiniGame extends Component {
     }
 
     doAction(child, command) {
-        if (command == null) {
+        if (command === null) {
             child.rotate();
         } else {
             child.move(command);
@@ -319,7 +323,7 @@ class RichardsMiniGame extends Component {
         for (let i = 0; i < boxes.length; i++) {
             const box = boxes[i];
             // if the clone hits the bottom or the next boxs is already on the bottom 
-            if (box.y == Board_HEIGHT - 1 || (gameboard[box.x][box.y + 1] != null && gameboard[box.x][box.y + 1].hitBottom)) {
+            if (box.y === Board_HEIGHT - 1 || (gameboard[box.x][box.y + 1] != null && gameboard[box.x][box.y + 1].hitBottom)) {
                 return true;
             }
         }
@@ -342,7 +346,7 @@ class RichardsMiniGame extends Component {
             this.doAction(childClone, command);
 
             // if the clone hit something or is out of bounds
-            if (childClone.x < 0 || childClone.y < 0 || childClone.x == Board_WIDTH || gameboard[childClone.x][childClone.y] != null) {
+            if (childClone.x < 0 || childClone.y < 0 || childClone.x === Board_WIDTH || gameboard[childClone.x][childClone.y] != null) {
                 actionSuccess = false;
                 break;
             }
@@ -353,7 +357,7 @@ class RichardsMiniGame extends Component {
         }
 
         // if evaluation failed, do nothing
-        if (actionSuccess == false) {
+        if (actionSuccess === false) {
             gameboard = this.initBoardLogic();
             this.addBoxesToBoard(gameboard, boxes);
             return gameboard;
@@ -417,7 +421,7 @@ class RichardsMiniGame extends Component {
             for (let y = 0; y < column.length; y++) {
                 const cell = column[y];
                 if (cell != null) {
-                    this.activateSquare(x, y);
+                    this.activateSquare(x, y, cell.color);
                 } else {
                     this.deactivateSqare(x, y);
                 }
@@ -433,13 +437,12 @@ class RichardsMiniGame extends Component {
         }
     }
 
-    activateSquare(x, y) {
-        this.RichardsMiniGame[x][y].current.setState({ active: true });
+    activateSquare(x, y, style) {
+        this.RichardsMiniGame[x][y].current.setState({ style: defaultSquareClass + " " + style });
     }
 
     deactivateSqare(x, y) {
-        this.RichardsMiniGame[x][y].current.setState({ active: false });
-        this.RichardsMiniGame[x][y].current.setState({ bottom: false });
+        this.RichardsMiniGame[x][y].current.setState({ style: defaultSquareClass + " " + colors.BLANK });
     }
 }
 export default RichardsMiniGame;

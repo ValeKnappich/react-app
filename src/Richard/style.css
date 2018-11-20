@@ -1,5 +1,26 @@
-.red{
+.redBox{
     background: red !important;
+}
+.blueBox{
+  background: blue  !important;
+}
+.grayBox{
+ background: gray  !important;
+}
+.greenBox{
+  background: limegreen !important;
+}
+.yellowBox{
+  background: yellow !important;
+}
+.cyanBox{
+  background: cyan !important;
+}
+.pinkBox{
+  background: pink !important;
+}
+.whiteBox{
+  background: white !important;
 }
   .Screensaver {
     text-align: center;
