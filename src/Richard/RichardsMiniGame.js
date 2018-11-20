@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import './style.css';
+import ArrowKeysReact from 'arrow-keys-react';
 
 const Board_HEIGHT = 20;
 const Board_WIDTH = 10;
+const direction = { "NORTH": 1, "EAST": 2, "SOUTH": 3, "WEST": 4 }
+const movement = { "DOWN": 1, "LEFT": 2, "RIGHT": 3 }
+const rotationType = { "AXIS": 1, "DIAGONAL": 2 }
+Object.freeze(direction);
+Object.freeze(movement);
+Object.freeze(rotationType);
 
 class GameBox {
 
@@ -12,8 +19,8 @@ class GameBox {
         this.dir = directionValue;
         this.distance = distanceValue;
         this.hitBottom = false;
-        this.isEvaluated = false;
         this.old = [];
+        this.rotation = rotationType.AXIS;
     }
 
     move(command) {
@@ -33,22 +40,59 @@ class GameBox {
         if (this.distance == 0 || this.hitBottom) {
             return;
         }
-        if (this.dir == direction.SOUTH) {
-            this.x = this.x + this.distance;
-            this.y = this.y - this.distance;
-            this.dir = direction.EAST;
-        } else if (this.dir == direction.EAST) {
-            this.x = this.x - this.distance;
-            this.y = this.y - this.distance;
-            this.dir = direction.NORTH;
-        } else if (this.dir == direction.NORTH) {
-            this.x = this.x - this.distance;
-            this.y = this.y + this.distance;
-            this.dir = direction.WEST;
-        } else {
-            this.x = this.x + this.distance;
-            this.y = this.y + this.distance;
-            this.dir = direction.SOUTH;
+        switch (this.rotation) {
+            case rotationType.DIAGONAL:
+                this.rotateDiagonal();
+                break;
+            default:
+                this.rotateAxis();
+                break;
+        }
+    }
+
+    rotateAxis() {
+        switch (this.dir) {
+            case direction.SOUTH:
+                this.x = this.x + this.distance;
+                this.y = this.y - this.distance;
+                this.dir = direction.EAST;
+                break;
+            case direction.EAST:
+                this.x = this.x - this.distance;
+                this.y = this.y - this.distance;
+                this.dir = direction.NORTH;
+                break;
+            case direction.NORTH:
+                this.x = this.x - this.distance;
+                this.y = this.y + this.distance;
+                this.dir = direction.WEST;
+                break;
+            default:
+                this.x = this.x + this.distance;
+                this.y = this.y + this.distance;
+                this.dir = direction.SOUTH;
+                break;
+        }
+    }
+
+    rotateDiagonal() {
+        switch (this.dir) {
+            case direction.SOUTH:
+                this.x = this.x + this.distance * 2;
+                this.dir = direction.EAST;
+                break;
+            case direction.EAST:
+                this.y = this.y - this.distance * 2;
+                this.dir = direction.NORTH;
+                break;
+            case direction.NORTH:
+                this.x = this.x - this.distance * 2;
+                this.dir = direction.WEST;
+                break;
+            default:
+                this.y = this.y + this.distance * 2;
+                this.dir = direction.SOUTH;
+                break;
         }
     }
 
@@ -56,6 +100,7 @@ class GameBox {
         const newBox = new GameBox(this.x, this.y, this.dir, this.distance);
         newBox.hitBottom = this.hitBottom;
         newBox.old = this;
+        newBox.rotation = this.rotation;
         return newBox;
     }
 }
@@ -86,6 +131,20 @@ class RichardsMiniGame extends Component {
         super();
         this.RichardsMiniGame = [];
         this.state = { boxes: [] };
+        ArrowKeysReact.config({
+            left: () => {
+                this.updateMoveLeft();
+            },
+            right: () => {
+                this.updateMoveRight();
+            },
+            up: () => {
+                this.updateRotate();
+            },
+            down: () => {
+                this.updateMoveDown();
+            }
+        });
         for (let x = 0; x < Board_WIDTH; x++) {
             let rowRefs = [];
             for (let y = 0; y < Board_HEIGHT; y++) {
@@ -105,20 +164,20 @@ class RichardsMiniGame extends Component {
         }
         return (
             <div className="Board">
-                <input type="button" value="Start" onClick={() => {
-                    this.update(null, this.createRandomShape());
+                <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" onClick={() => {
+                    this.updateAddShape(this.createRandomShape());
                 }} />
                 <input type="button" value="Rotate" onClick={() => {
-                    this.update();
+                    this.updateRotate();
                 }} />
                 <input type="button" value="Left" onClick={() => {
-                    this.update(movement.LEFT);
+                    this.updateMoveLeft();
                 }} />
                 <input type="button" value="Right" onClick={() => {
-                    this.update(movement.RIGHT);
+                    this.updateMoveRight();
                 }} />
                 <input type="button" value="Down" onClick={() => {
-                    this.update(movement.DOWN);
+                    this.updateMoveDown();
                 }} />
                 <header className="Board-header">
                     {RichardsMiniGame}
@@ -138,9 +197,38 @@ class RichardsMiniGame extends Component {
         return newBoard;
     }
 
+    addBoxesToBoard(board, boxes) {
+        for (let i = 0; i < boxes.length; i++) {
+            const box = boxes[i];
+            board[box.x][box.y] = box;
+        }
+    }
+
+    getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
     createRandomShape() {
-        // TODO implement random
-        return this.createTshape();
+        const rand = this.getRandomInt(0, 5);
+        switch (rand) {
+            case 0:
+                return this.createIshape();
+            case 1:
+                return this.createJshape();
+            case 2:
+                return this.createLshape();
+            case 3:
+                return this.createOshape();
+            case 4:
+                return this.createSshape();
+            case 5:
+                return this.createTshape();
+            default:
+                return this.createOshape();
+        }
+
     }
 
     createIshape() {
@@ -184,110 +272,95 @@ class RichardsMiniGame extends Component {
         newShape.push(new GameBox(5, 2, direction.EAST, 1));
         newShape.push(new GameBox(4, 2, direction.NORTH, 0));
         newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
-        newShape.push(new GameBox(3, 3, direction.WEST, 1));
+        const box = new GameBox(3, 3, direction.SOUTH, 1);
+        box.rotation = rotationType.DIAGONAL;
+        newShape.push(box);
         return newShape;
     }
 
     createOshape() {
         let newShape = [];
-        newShape.push(new GameBox(5, 2, direction.EAST, 1));
-        newShape.push(new GameBox(4, 2, direction.NORTH, 0));
-        newShape.push(new GameBox(4, 3, direction.SOUTH, 1));
-        newShape.push(new GameBox(5, 3, direction.WEST, 1));
+        newShape.push(new GameBox(5, 2, direction.SOUTH, 0));
+        newShape.push(new GameBox(4, 2, direction.SOUTH, 0));
+        newShape.push(new GameBox(4, 3, direction.SOUTH, 0));
+        newShape.push(new GameBox(5, 3, direction.SOUTH, 0));
         return newShape;
     }
 
-    orderBoxes(boxes, command) {
-        return boxes.sort((a, b) => {
-            if (command == null) {
-                if (a.x > b.x) return -1;
-                if (a.x < b.x) return 1;
-                if (a.y > b.y) return -1;
-                if (a.y > b.y) return 1;
-                return 0;
+    addHitBottomBoxesToBoard(gameboard, boxes) {
+        for (let i = 0; i < boxes.length; i++) {
+            const box = boxes[i];
+            if (box.hitBottom) {
+                gameboard[box.x][box.y] = box;
             }
-            else if (command == movement.LEFT) {
-                if (a.x < b.x) return 1;
-                if (a.x > b.x) return -1;
-                if (a.y > b.y) return 1;
-                if (a.y < b.y) return -1;
-                return 0;
-            }
-            else if (command == movement.DOWN) {
-                if (a.y > b.y) return -1;
-                if (a.y < b.y) return 1;
-                if (a.x < b.x) return -1;
-                if (a.x > b.x) return 1;
-                return 0;
-            }
-            else {
-                if (a.x > b.x) return -1;
-                if (a.x < b.x) return 1;
-                if (a.y > b.y) return -1;
-                if (a.y < b.y) return 1;
-                return 0;
-            }
-        });
+        }
     }
 
-    evaluate(command, gameboard, boxes) {
-        let orderedBoxes = this.orderBoxes(boxes, command);
-        let actionSuccess = true;
-        let bottomHit = false;
-        let newChildren = [];
+    doAction(child, command) {
+        if (command == null) {
+            child.rotate();
+        } else {
+            child.move(command);
+        }
+    }
 
-        for (let i = 0; i < orderedBoxes.length; i++) {
-            const box = orderedBoxes[i];
+    hitBottomDetection(gameboard, newChildren, boxes) {
+        let bottomHit = this.hitBottomCheck(gameboard, newChildren);
+        if (bottomHit) {
+            this.markAllAsBottomHit(newChildren);
+            //Create new Random Shape on the Platform
+            const newBoxes = this.createRandomShape();
+            this.addNewBoxesToBoxes(boxes, newBoxes);
+            this.addBoxesToBoard(gameboard, newBoxes);
+        }
+    }
+
+    hitBottomCheck(gameboard, boxes) {
+        for (let i = 0; i < boxes.length; i++) {
+            const box = boxes[i];
+            // if the clone hits the bottom or the next boxs is already on the bottom 
+            if (box.y == Board_HEIGHT - 1 || (gameboard[box.x][box.y + 1] != null && gameboard[box.x][box.y + 1].hitBottom)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    evaluate(command, boxes) {
+        let actionSuccess = true;
+        let newChildren = [];
+        let gameboard = this.initBoardLogic();
+        this.addHitBottomBoxesToBoard(gameboard, boxes);
+        for (let i = 0; i < boxes.length; i++) {
+            const box = boxes[i];
 
             // do not evaluate if is already evaluated
-            if (box.isEvaluated || box.hitBottom) {
+            if (box.hitBottom) {
                 continue;
             }
             const childClone = box.clone();
-
-            // Do action
-            if (command == null) {
-                childClone.rotate();
-            } else {
-                childClone.move(command);
-            }
+            this.doAction(childClone, command);
 
             // if the clone hit something or is out of bounds
-            if (childClone.x < 0 || childClone.y < 0 || childClone.x == Board_WIDTH) {
+            if (childClone.x < 0 || childClone.y < 0 || childClone.x == Board_WIDTH || gameboard[childClone.x][childClone.y] != null) {
                 actionSuccess = false;
                 break;
             }
 
-            // check if a block is in its way
-            if (gameboard[childClone.x][childClone.y] != null) {
-                let otherClone = newChildren.find(x => gameboard[childClone.x][childClone.y] == x.old);
-                // check if the updated version is still in its way and that is not itself
-                if ((otherClone == null || (otherClone.x == childClone.x && otherClone.y == childClone.y)) && gameboard[childClone.x][childClone.y] !== childClone.old) {
-                    actionSuccess = false;
-                    break;
-                }
-            }
-
-            // if the clone hits the bottom or the next boxs is already on the bottom 
-            if (childClone.y == Board_HEIGHT - 1 || (gameboard[childClone.x][childClone.y + 1] != null && gameboard[childClone.x][childClone.y + 1].hitBottom)) {
-                bottomHit = true;
-            }
-
             // Mark as evaluated and remember in array
-            childClone.isEvaluated = true;
             newChildren.push(childClone);
+            gameboard[childClone.x][childClone.y] = childClone;
         }
 
         // if evaluation failed, do nothing
         if (actionSuccess == false) {
-            return;
+            gameboard = this.initBoardLogic();
+            this.addBoxesToBoard(gameboard, boxes);
+            return gameboard;
         }
-
-        // shape hit bottom and set hitBottom for all true
-        if (bottomHit == true) {
-            this.markAllAsBottomHit(newChildren);
-        }
+        this.hitBottomDetection(gameboard, newChildren, boxes);
         this.overrideOriginalsWithValues(newChildren);
+        return gameboard;
     }
 
     markAllAsBottomHit(newChildren) {
@@ -304,24 +377,41 @@ class RichardsMiniGame extends Component {
             oldChild.x = newChild.x;
             oldChild.y = newChild.y;
             oldChild.hitBottom = newChild.hitBottom;
-            oldChild.isEvaluated = true;
             oldChild.dir = newChild.dir;
         }
+    }
+
+    updateAddShape(boxes) {
+        this.update(null, boxes);
+    }
+
+    updateMoveRight() {
+        this.update(movement.RIGHT, null);
+    }
+
+    updateMoveLeft() {
+        this.update(movement.LEFT, null);
+    }
+
+    updateRotate() {
+        this.update(null, null);
+    }
+
+    updateMoveDown() {
+        this.update(movement.DOWN, null);
     }
 
     update(command, newBoxes) {
 
         let boxes = this.state.boxes;
+        let newBoard;
         if (newBoxes != null) {
-            for (let i = 0; i < newBoxes.length; i++) {
-                const element = newBoxes[i];
-                boxes.push(element);
-            }
+            this.addNewBoxesToBoxes(boxes, newBoxes);
+            newBoard = this.initBoardLogic();
+            this.addBoxesToBoard(newBoard, boxes);
         } else {
-            this.evaluate(command, this.createGameBoardOfBoxes(boxes), boxes);
+            newBoard = this.evaluate(command, boxes);
         }
-
-        let newBoard = this.createGameBoardOfBoxes(boxes);
         for (let x = 0; x < newBoard.length; x++) {
             const column = newBoard[x];
             for (let y = 0; y < column.length; y++) {
@@ -336,14 +426,11 @@ class RichardsMiniGame extends Component {
         this.setState({ boxes: boxes });
     }
 
-    createGameBoardOfBoxes(boxes) {
-        let newBoard = this.initBoardLogic();
-        for (let i = 0; i < boxes.length; i++) {
-            const box = boxes[i];
-            newBoard[box.x][box.y] = box;
-            boxes[i].isEvaluated = false;
+    addNewBoxesToBoxes(boxes, newBoxes) {
+        for (let i = 0; i < newBoxes.length; i++) {
+            const element = newBoxes[i];
+            boxes.push(element);
         }
-        return newBoard;
     }
 
     activateSquare(x, y) {
@@ -355,11 +442,4 @@ class RichardsMiniGame extends Component {
         this.RichardsMiniGame[x][y].current.setState({ bottom: false });
     }
 }
-
-const direction = { "NORTH": 1, "EAST": 2, "SOUTH": 3, "WEST": 4 }
-Object.freeze(direction);
-const movement = { "DOWN": 1, "LEFT": 2, "RIGHT": 3 }
-Object.freeze(movement);
-
-
 export default RichardsMiniGame;
