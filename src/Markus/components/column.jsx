@@ -3,8 +3,9 @@ import Field from "./field";
 
 class Column extends Component {
   constructor(props) {
-    super();
+    super();	
     this.state = {
+		//array fields becomes the container for the field components
       fields: [
         { id: 0 },
         { id: 1 },
@@ -13,13 +14,16 @@ class Column extends Component {
         { id: 4 },
         { id: 5 }
       ],
+	  //variable is for checking weather the column is full and no player can place the next stone in it 
       enabled: true
     };
-
+	
+	//assigns the references of each field in an array
     this.fields = [];
     for (let i = 0; i <= 5; i++) {
       this.fields[i] = React.createRef();
     }
+	//contains the color-status of each field component
     this.fieldArray = [];
     for (let i = 0; i <= 5; i++) {
       this.fieldArray[i] = "blanc";
@@ -47,7 +51,8 @@ class Column extends Component {
     }
     return i - 1;
   }
-
+  
+	//onclick Event, when player set ones stone in a column
   handleTurn() {
     if (this.getLastBlanc() <= 5 && this.getLastBlanc() >= 0) {
       //sets the color in the field component

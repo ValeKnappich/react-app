@@ -6,6 +6,7 @@ class Game extends Component {
   constructor() {
     super();
     this.state = {
+		//array culumns becomes the container for the column components
       columns: [
         { id: 0 },
         { id: 1 },
@@ -16,14 +17,18 @@ class Game extends Component {
         { id: 6 }
       ],
       playerColor: "yellow",
+	  //variable for checking the winner
       winner: "blanc",
+	  //variable to check weather its a draw
       draw: false
     };
+	//assigns the references of each field in an array
     this.columns = [];
     for (let i = 0; i <= 6; i++) {
       this.columns[i] = React.createRef();
     }
     this.modal = React.createRef();
+	//"gameArray" contains the color statuses of each column
     this.gameArray = [];
     this.buttonEnabled = [true, true, true, true, true, true, true];
     this.setGameArray = this.setGameArray.bind(this);
@@ -43,7 +48,8 @@ class Game extends Component {
   setWinner(color) {
     this.setState({ winner: color });
   }
-
+	
+	//set the color statusses of each column in the array
   setGameArray() {
     for (let i = 0; i <= 6; i++) {
       this.gameArray[i] = this.columns[i].current.fieldArray;
@@ -74,6 +80,7 @@ class Game extends Component {
     return classes;
   }
 
+  //checks if the rule for a vertical win is true or false
   checkVertical(columnIndex, fieldIndex) {
     let color = this.gameArray[columnIndex][fieldIndex];
     if (fieldIndex >= 3) {
@@ -89,7 +96,7 @@ class Game extends Component {
     }
     return true;
   }
-
+	//checks if the rule for a horizontal win is true or false
   checkHorizontal(columnIndex, fieldIndex) {
     let color = this.gameArray[columnIndex][fieldIndex];
     let counter = 1;
@@ -115,7 +122,8 @@ class Game extends Component {
       return true;
     }
   }
-
+	
+	//checks if the rule for a diagonal win is true or false
   checkDiagonal(columnIndex, fieldIndex) {
     let color = this.gameArray[columnIndex][fieldIndex];
     let counterLeftUp = 1;
@@ -196,7 +204,8 @@ class Game extends Component {
       this.setState({ draw: true });
     }
   }
-
+	
+	//translate the playorcolor in the code to german for display purposes
   colorToGerman() {
     let color = this.state.winner === "red" ? "Rot" : "Gelb";
     return color;
