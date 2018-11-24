@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import './style.css';
 import ArrowKeysReact from 'arrow-keys-react';
+import { Table, TableRow, TableHeader } from 'grommet';
+import '../../node_modules/grommet-css';
+import ReactDOM from "react-dom";
+import openPopup from '../ShareComponents/popup-tetris'
 
 const Board_HEIGHT = 20;
 const Board_WIDTH = 10;
@@ -13,6 +17,47 @@ Object.freeze(direction);
 Object.freeze(movement);
 Object.freeze(rotationType);
 Object.freeze(colors);
+
+class InformationBoard extends Component {
+    constructor() {
+        super();
+        this.state = { buttonText: "Start" };
+        this.time_ref = React.createRef();
+    }
+    render() {
+        return (<Time ref={this.time_ref} />);
+    }
+
+}
+class Time extends Component {
+    constructor() {
+        super();
+        this.state = { secs: 0, gamestatus: true};
+        this.timer = this.timer.bind(this);
+        this.start = this.start.bind(this);
+    }
+    render() {
+        return (
+                <span> {this.state.secs}</span>
+        );
+    }
+    timer() {
+        if(this.state.gamestatus === false){
+            this.reset();
+            return this.state.secs;
+        }
+        this.setState({ secs: this.state.secs + 1 });
+        setTimeout(this.timer, 1000);
+
+    }
+    start() {
+        this.reset();
+        setTimeout(this.timer, 1000);
+    }
+    reset() {
+        this.setState({ secs: 0 });
+    }
+}
 
 class GameBox {
 
@@ -130,11 +175,13 @@ class Square extends Component {
     }
 }
 
+
 class RichardsMiniGame extends Component {
     constructor() {
         super();
         this.RichardsMiniGame = [];
-        this.state = { boxes: [] };
+        this.InformationBoard_ref = React.createRef();
+        this.state = { boxes: [], Points: 0, Time: 0, gameEndText: "No text inside" };
         ArrowKeysReact.config({
             left: () => {
                 this.updateMoveLeft();
@@ -167,25 +214,23 @@ class RichardsMiniGame extends Component {
             RichardsMiniGame.push(<div className="Board-row">{row}</div>)
         }
         return (
-            <div className="Board">
-                <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" onClick={() => {
-                    this.updateAddShape(this.createRandomShape());
-                }} />
-                <input type="button" value="Rotate" onClick={() => {
-                    this.updateRotate();
-                }} />
-                <input type="button" value="Left" onClick={() => {
-                    this.updateMoveLeft();
-                }} />
-                <input type="button" value="Right" onClick={() => {
-                    this.updateMoveRight();
-                }} />
-                <input type="button" value="Down" onClick={() => {
-                    this.updateMoveDown();
-                }} />
-                <header className="Board-header">
-                    {RichardsMiniGame}
-                </header>
+            <div className="body-game">
+                <div className="Pannel">
+                    <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" onClick={() => {
+                        this.updateAddShape(this.createRandomShape());
+                        this.InformationBoard_ref.current.time_ref.current.start();
+                    }} />
+                    <input type="button" value="Game End" onClick={() => {
+                        this.InformationBoard_ref.current.time_ref.current.setState({gamestatus : false});
+                        this.gameEnd();
+                    }} />
+                </div>
+                <InformationBoard ref={this.InformationBoard_ref}/>
+                <div className="Board-screen">
+                    <header className="Board-game">
+                        {RichardsMiniGame}
+                    </header>
+                </div>
             </div>
         )
     }
@@ -443,6 +488,36 @@ class RichardsMiniGame extends Component {
 
     deactivateSqare(x, y) {
         this.RichardsMiniGame[x][y].current.setState({ style: defaultSquareClass + " " + colors.BLANK });
+    }
+
+    openPopup() {
+        //Popup
+        openPopup(this.state.gameEndText + " You reached " + this.state.Points + " Points in " + this.InformationBoard_ref.current.time_ref.current.state.secs + " Seconds!",
+            [["Want to play another round?", () => {
+                //Set up new Game
+                for (let x = 0; x < Board_WIDTH; x++) {
+                    for (let y = 0; y < Board_HEIGHT; y++) {
+                        this.deactivateSqare(x, y);
+                    }
+                }
+                //Set all State of the beginning Value and Close Popup
+                this.setState({ Time: 0, Points: 0, gameEndText: "" }, () => ReactDOM.unmountComponentAtNode(document.getElementById('popup_container')));
+            }]], true);
+    }
+    gameEnd() {
+        if (this.state.Points == 0) {
+            this.setState({ gameEndText: "Do you know how to play the game? Loser!" }, () => this.openPopup());
+        }
+        else if (this.state.Points <= 10) {
+            this.setState({ gameEndText: "Good" }, () => this.openPopup());
+        }
+        else if (this.state.Points < 20 && this.state.Points > 10) {
+            this.setState({ gameEndText: "Well done, are you cheating ?" }, () => this.openPopup());
+        }
+        else {
+            this.setState({ gameEndText: "You are ready for the World Championsship !" }, () => this.openPopup());
+        }
+
     }
 }
 export default RichardsMiniGame;
