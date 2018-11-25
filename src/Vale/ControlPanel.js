@@ -46,7 +46,7 @@ class Counter extends Component{
     render(){
         return(
             //Completely controlled by parent over props
-            <span id="counter" style={{margin: "10px"}} className="important">{this.props.count}</span>
+            <span id="counter" style={{margin: "10px",color: "black"}} className="important">{this.props.count}</span>
         );
     }
 }
@@ -60,7 +60,7 @@ class Countdown extends Component{
     }
     render(){
         return(
-            <span style={{margin: "10px"}} className="important">{this.state.secs}</span>
+            <span style={{margin: "10px",color: "black"}} className="important">{this.state.secs}</span>
         );
     }
     countDown(){
