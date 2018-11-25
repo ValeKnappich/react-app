@@ -1,7 +1,7 @@
 {
-  "main.css": "/react-app/static/css/main.2c4abba0.chunk.css",
-  "main.js": "/react-app/static/js/main.a8db151a.chunk.js",
-  "main.js.map": "/react-app/static/js/main.a8db151a.chunk.js.map",
+  "main.css": "/react-app/static/css/main.c6f98ab3.chunk.css",
+  "main.js": "/react-app/static/js/main.d6ed6450.chunk.js",
+  "main.js.map": "/react-app/static/js/main.d6ed6450.chunk.js.map",
   "static/css/1.b6753d94.chunk.css": "/react-app/static/css/1.b6753d94.chunk.css",
   "static/js/1.2c94e284.chunk.js": "/react-app/static/js/1.2c94e284.chunk.js",
   "static/js/1.2c94e284.chunk.js.map": "/react-app/static/js/1.2c94e284.chunk.js.map",
@@ -9,9 +9,9 @@
   "runtime~main.js.map": "/react-app/static/js/runtime~main.ec461257.js.map",
   "static/media/funny_bot.gif": "/react-app/static/media/funny_bot.49631b63.gif",
   "static/media/basics.css": "/react-app/static/media/red_triangle.b2146d40.png",
-  "static/css/main.2c4abba0.chunk.css.map": "/react-app/static/css/main.2c4abba0.chunk.css.map",
+  "static/css/main.c6f98ab3.chunk.css.map": "/react-app/static/css/main.c6f98ab3.chunk.css.map",
   "static/css/1.b6753d94.chunk.css.map": "/react-app/static/css/1.b6753d94.chunk.css.map",
   "index.html": "/react-app/index.html",
-  "precache-manifest.93064dd42b8ac22092c05ba50b7c3107.js": "/react-app/precache-manifest.93064dd42b8ac22092c05ba50b7c3107.js",
+  "precache-manifest.8fab36fdcf40a2e8b7e17be6b9b1d25e.js": "/react-app/precache-manifest.8fab36fdcf40a2e8b7e17be6b9b1d25e.js",
   "service-worker.js": "/react-app/service-worker.js"
 }
