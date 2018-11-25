@@ -189,6 +189,7 @@ class Square extends Component {
     render() {
         return (<button
             id={this.props.id}
+            key={this.state.coordinatex + "-" + this.state.coordinatey}
             className={this.state.style}>
             {this.state.value}
         </button>);
@@ -237,7 +238,7 @@ class RichardsMiniGame extends Component {
             let row = []
             for (let x = 0; x < Board_WIDTH; x++) {
                 //Push Board_Wight Sqaure Compontens in a Array
-                row.push(<Square ref={this.RichardsMiniGame[x][y]} id={x + "-" + y} coordinatex={x} coordinatey={y} />);
+                row.push(<Square ref={this.RichardsMiniGame[x][y]} key={x + "-" + y} id={x + "-" + y} coordinatex={x} coordinatey={y} />);
             }
             RichardsMiniGame.push(<div className="Board-row">{row}</div>)
         }
@@ -258,18 +259,18 @@ class RichardsMiniGame extends Component {
         return (
             <div className="body-game">
                 <div className="Pannel">
-                    <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" type="button" className="ControlPanel button important" onClick={() => {
+                    <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" className="ControlPanel button important" onClick={() => {
                         this.updateAddShape(this.createRandomShape());
                         this.moveDownSecond();
                         this.time_ref.current.start();
                     }} />
                     <div className="ControlPanel">
-                        <p className="headline">Time 
+                        <p className="headline">Time
                             <Time ref={this.time_ref} />
                         </p>
                     </div>
                     <div className="ControlPanel">
-                        <span class="Button_text">The more rows you delete at once, the more points you get</span>
+                        <span className="Button_text">The more rows you delete at once, the more points you get</span>
                         <p className="headline">Points
                             <Counter Points={this.state.Points} />
                         </p>
