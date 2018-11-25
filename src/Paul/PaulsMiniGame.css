@@ -34,16 +34,6 @@
 
 
 /*Layout Allgemein*/
-.PaulsBody {
-    background-color: lightskyblue;
-    position: absolute;
-    /*height: 46.05vw;*/
-    height: 94.31%;
-
-    top: 2.8vw;
-    width: 100vw;
-}
-
 .button2 {
     width: 6vw;
     height: 100%;
@@ -59,6 +49,22 @@
     top: 2vw;
     left: 24.8vw;
     width: 50vw;
+    font-size: 2.2vw;
+}
+
+/*Layout Allgemein -> Für kleinere Auflösungen*/
+@media only screen and (max-width: 1200px) {
+    .Paulh1 {
+        position: relative;
+        text-align: center;
+        font-family: Verdana;
+        color: white;
+        text-shadow: transparent 0px 0px 0px, #000 1px 2px 1px;
+        top: 3vw;
+        left: 24.8vw;
+        width: 50vw;
+        font-size: 4.4vw;
+    }
 }
 
 .tables{
@@ -74,20 +80,162 @@
     border-collapse: collapse;
     font-family: Verdana;
 }
-@-moz-document url-prefix() {
 
+/*Falls Browser Firefox*/
+@-moz-document url-prefix() {
+    .tables{ position: relative;
+        left: 14vw;
+        top: 1vw;
+        width: 15vw;
+        height: 5vw;
+        margin: 0%;
+        padding: 0;
+        border: 0;
+        text-align: center;
+        border-collapse: collapse;
+        font-family: Verdana;}
+}
+
+.PaulsBody {
+    background-color: lightskyblue;
+    position: absolute;
+    height: 94.71%;
+    top: 11vw;
+    width: 100vw;
+}
+
+/* Layout Allgemein -> Für kleinere Auflösungen*/
+@media only screen and (max-device-width: 400px) and (min-width: 01px){
+    .PaulsBody {
+        background-color: lightskyblue;
+        position: absolute;
+        height: 90.51%;
+        top: 17vw;
+        width: 100vw;
+    }
+    .tables{
+        position: relative;
+        left: 20.5vw;
+        top: 1vw;
+        width: 15vw;
+        height: 8vw;
+        margin: 0%;
+        padding: 0;
+        border: 0;
+        text-align: center;
+        border-collapse: collapse;
+        font-family: Verdana;
+    }
+    @-moz-document url-prefix() {
         .tables{ position: relative;
             left: 14vw;
             top: 1vw;
             width: 15vw;
-            height: 5vw;
+            height: 10vw;
             margin: 0%;
             padding: 0;
             border: 0;
             text-align: center;
             border-collapse: collapse;
             font-family: Verdana;}
+    }
+}
 
+@media only screen and (max-device-width: 600px) and (min-width: 401px){
+    .PaulsBody {
+        background-color: lightskyblue;
+        position: absolute;
+        height: 92.99%;
+        top: 14vw;
+        width: 100vw;
+    }
+
+    .tables{
+        position: relative;
+        left: 20.5vw;
+        top: 1vw;
+        width: 15vw;
+        height: 7vw;
+        margin: 0%;
+        padding: 0;
+        border: 0;
+        text-align: center;
+        border-collapse: collapse;
+        font-family: Verdana;
+    }
+    @-moz-document url-prefix() {
+        .tables{ position: relative;
+            left: 14vw;
+            top: 1vw;
+            width: 15vw;
+            height: 10vw;
+            margin: 0%;
+            padding: 0;
+            border: 0;
+            text-align: center;
+            border-collapse: collapse;
+            font-family: Verdana;}
+    }
+}
+
+@media only screen and (max-width: 800px) and (min-width: 601px) {
+    .PaulsBody {
+        background-color: lightskyblue;
+        position: absolute;
+        height: 94.71%;
+        top: 7vw;
+        width: 100vw;
+    }
+}
+
+@media only screen and (max-width: 1200px) and (min-width: 801px) {
+    .PaulsBody {
+        background-color: lightskyblue;
+        position: absolute;
+        height: 95.81%;
+        top: 5.5vw;
+        width: 100vw;
+    }
+}
+
+@media only screen and (max-width: 1400px) and (min-width: 1201px){
+    .PaulsBody {
+        background-color: lightskyblue;
+        position: absolute;
+        height: 94.31%;
+        top: 4.5vw;
+        width: 100vw;
+    }
+}
+
+@media only screen and (max-width: 1600px) and (min-width: 1401px){
+    .PaulsBody {
+        background-color: lightskyblue;
+        position: absolute;
+        height: 94.31%;
+        top: 3vw;
+        width: 100vw;
+    }
+}
+
+@media only screen and (max-width: 1800px) and (min-width: 1601px){
+    .PaulsBody {
+        background-color: lightskyblue;
+        position: absolute;
+        height: 94.31%;
+        top: 3.5vw;
+        width: 100vw;
+    }
+}
+
+@media only screen and (min-width: 1801px){
+    .PaulsBody {
+        background-color: lightskyblue;
+        position: absolute;
+        height: 94.71%;
+        top: 2.6vw;
+        width: 100vw;
+    }
 }
 
 
@@ -99,6 +247,17 @@
     font-size: 1vw;
     top: 2vw;
     border-collapse: collapse;
+}
+
+/*-> Für kleinere Auflösungen**/
+@media only screen and (max-width: 1200px) {
+    .general {
+        height: 6%;
+        position: relative;
+        font-size: 1.8vw;
+        top: 2vw;
+        border-collapse: collapse;
+    }
 }
 
 #mode1 {
@@ -137,7 +296,7 @@
 
 
 
-/*Layout and position of Text ans Pictures below of the game field*/
+/*Layout und position von Text und bildern unter dem spielfeld*/
 .textNextPlayer {
     position: relative;
     top: 3vw;
@@ -150,6 +309,21 @@
     text-blink: 2;
     text-shadow: transparent 0px 0px 0px, #000 0.5px 0.2px 0.5px;
 
+}
+
+@media only screen and (max-width: 1300px) {
+    .textNextPlayer {
+        position: relative;
+        top: 3vw;
+        left: 24.8vw;
+        width: 50vw;
+        font-size: 2.5vw;
+        text-align: center;
+        font-family: Verdana;
+        color: black;
+        text-blink: 2;
+        text-shadow: transparent 0px 0px 0px, #000 0.5px 0.2px 0.5px;
+    }
 }
 
 .textResult {
