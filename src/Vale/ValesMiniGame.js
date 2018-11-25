@@ -1,11 +1,3 @@
-/*//React
-import React, { Component } from 'react';
-import './ValesMiniGame.css';
-//Components
-import '../../node_modules/grommet-css';
-import ReactDOM from "react-dom";
-import openPopup from '../ShareComponents/popup'*/
-
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom'
 

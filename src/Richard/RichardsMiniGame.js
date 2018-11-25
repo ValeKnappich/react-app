@@ -444,9 +444,9 @@ class RichardsMiniGame extends Component {
     moveShape(direction) {
         //this.moveBottomSquare(direction);
         let newCurrentShape = [];
-        let newCurrentShape_rotation_1 = [];
-        let newCurrentShape_rotation_2 = [];
-        let newCurrentShape_rotation_3 = [];
+        //let newCurrentShape_rotation_1 = [];
+        //let newCurrentShape_rotation_2 = [];
+        //let newCurrentShape_rotation_3 = [];
         console.log(rotation);
         console.log(direction);
         for (let i = 0; i < this.state.currentShape.length; i++) {
