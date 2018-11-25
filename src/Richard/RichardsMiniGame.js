@@ -189,7 +189,6 @@ class Square extends Component {
     render() {
         return (<button
             id={this.props.id}
-            key={this.state.coordinatex + "-" + this.state.coordinatey}
             className={this.state.style}>
             {this.state.value}
         </button>);
@@ -204,7 +203,7 @@ class RichardsMiniGame extends Component {
         super();
         this.RichardsMiniGame = [];
         this.time_ref = React.createRef();
-        this.state = { boxes: [], Points: 10, gameEndText: "" };
+        this.state = { boxes: [], Points: 0, gameEndText: "" };
         this.moveDownSecond = this.moveDownSecond.bind(this);
         this.udpateMoveDown = this.udpateMoveDown.bind(this);
         //The cases what happens when you press the keys
@@ -238,24 +237,11 @@ class RichardsMiniGame extends Component {
             let row = []
             for (let x = 0; x < Board_WIDTH; x++) {
                 //Push Board_Wight Sqaure Compontens in a Array
-                row.push(<Square ref={this.RichardsMiniGame[x][y]} key={x + "-" + y} id={x + "-" + y} coordinatex={x} coordinatey={y} />);
+                row.push(<Square ref={this.RichardsMiniGame[x][y]} key={this.props.id} id={x + "-" + y} coordinatex={x} coordinatey={y} />);
             }
             RichardsMiniGame.push(<div className="Board-row">{row}</div>)
         }
-        /*
-        <div className="Pannel">
-                    {// Start Button 
-                    }
-                    <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" onClick={() => {
-                        this.updateAddShape(this.createRandomShape());
-                        this.moveDownSecond();
-                        this.time_ref.current.start();
-                    }} />
-                    <input type="button" value="Game End" onClick={() => {
-                        this.time_ref.current.setState({ gamestatus: false });
-                        this.gameEnd();
-                    }} />
-                </div>*/
+
         return (
             <div className="body-game">
                 <div className="Pannel">
@@ -264,6 +250,9 @@ class RichardsMiniGame extends Component {
                         this.moveDownSecond();
                         this.time_ref.current.start();
                     }} />
+
+                    {//Displays the Time and the Points 
+                    }
                     <div className="ControlPanel">
                         <p className="headline">Time
                             <Time ref={this.time_ref} />
@@ -275,13 +264,28 @@ class RichardsMiniGame extends Component {
                             <Counter Points={this.state.Points} />
                         </p>
                     </div>
-                </div>
-
-                {// Displays the Time and the Points 
-                }
+                </div> 
+                {//Displays new Buttons and new screen resolution, to play tetris with an Smartphone 
+                    }
+                <div className="leftSideBoard">
+                        <input type="button" value="Down" className="button_direction" onClick={() => {
+                            this.udpateMoveDown();
+                        }} />
+                        <input type="button" value="Left" className="button_direction" onClick={() => {
+                            this.udpateMoveLeft();
+                        }} />
+                    </div>
+                    <div className="rightSideBoard">
+                        <input type="button" value="Right" className="button_direction" onClick={() => {
+                            this.udpateMoveRight();
+                        }} />
+                        <input type="button" value="Rotate" className="button_direction" onClick={() => {
+                            this.updateRotate();
+                        }} />
+                    </div>
                 <div className="Board-screen">
                     <header className="Board-game">
-                        {// Displays the entire Board
+                        {//Displays the entire Board
                         }
                         {RichardsMiniGame}
                     </header>
@@ -297,11 +301,11 @@ class RichardsMiniGame extends Component {
     //Move the Shape every Second Down
     moveDownSecond() {
         this.udpateMoveDown();
-        setTimeout(this.moveDownSecond, 1000);
+        setTimeout(this.moveDownSecond, 500);
     }
 
     initBoardLogic() {
-        // inits the two dimensional game board array
+        //inits the two dimensional game board array
         let newBoard = [];
         for (let i = 0; i < Board_WIDTH; i++) {
             newBoard[i] = [];
@@ -441,8 +445,7 @@ class RichardsMiniGame extends Component {
                 //catch Error if Shape over Board_Height
                 const cellBelow = (y + 1 === Board_HEIGHT) ? null : gameboard[x][y + 1];
 
-                if (cell != null && cell.hitBottom && cell.onlyDown
-                    && (cell.y === Board_HEIGHT - 1 || (cellBelow != null && cellBelow.hitBottom && cellBelow.onlyDown === false))) {
+                if (cell != null && cell.hitBottom && cell.onlyDown && (cell.y === Board_HEIGHT - 1 || (cellBelow != null && cellBelow.hitBottom && cellBelow.onlyDown === false))) {
                     cell.onlyDown = false;
                 }
             }
@@ -514,8 +517,8 @@ class RichardsMiniGame extends Component {
 
     updatePoints(clearRowCount) {
         let newPoints = clearRowCount * clearRowCount;
-        let oldPoints = this.state.points;
-        this.setState({ points: oldPoints + newPoints });
+        let oldPoints = this.state.Points;
+        this.setState({ Points: oldPoints + newPoints }); //Points wurden klein geschrieben
     }
 
     checkLineFull(gameboard, newChildren, boxes) {
@@ -535,6 +538,12 @@ class RichardsMiniGame extends Component {
                 if (y > lowestFullRow) {
                     lowestFullRow = y;
                 }
+                console.log({
+                    text: "row is full",
+                    gameboard: gameboard,
+                    newChildren: newChildren,
+                    boxes: boxes
+                })
                 this.clearRow(gameboard, y, newChildren, boxes);
             }
         }
@@ -548,6 +557,7 @@ class RichardsMiniGame extends Component {
                 const cell = gameboard[x][y];
                 if (cell != null && cell.hitBottom) {
                     cell.onlyDown = true;
+                    console.log("setAboveBoxes to Only down");
                 }
             }
         }
@@ -575,7 +585,7 @@ class RichardsMiniGame extends Component {
         for (let x = 0; x < Board_WIDTH; x++) {
             let cell = gameboard[x][y];
             this.removeElementFromList(newChildren, cell);
-            this.removeElementFromList(boxes, cell.old);
+            this.removeElementFromList(boxes, cell); //this.removeElementFromList(boxes, cell.old);
         }
     }
 
@@ -603,6 +613,11 @@ class RichardsMiniGame extends Component {
             oldChild.hitBottom = newChild.hitBottom;
             oldChild.dir = newChild.dir;
             oldChild.onlyDown = newChild.onlyDown;
+            console.log({
+                text: "New Old Child",
+                oldChild: newChild,
+                newChild: oldChild
+            });
         }
     }
 
