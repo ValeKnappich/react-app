@@ -206,6 +206,8 @@ class RichardsMiniGame extends Component {
         this.state = { boxes: [], Points: 0, gameEndText: "" };
         this.moveDownSecond = this.moveDownSecond.bind(this);
         this.udpateMoveDown = this.udpateMoveDown.bind(this);
+        this.gameEnd = this.gameEnd.bind(this);
+        this.openPopupBoard = this.openPopupBoard.bind(this);
         //The cases what happens when you press the keys
         ArrowKeysReact.config({
             left: () => {
@@ -250,7 +252,6 @@ class RichardsMiniGame extends Component {
                         this.moveDownSecond();
                         this.time_ref.current.start();
                     }} />
-
                     {//Displays the Time and the Points 
                     }
                     <div className="ControlPanel">
@@ -264,25 +265,30 @@ class RichardsMiniGame extends Component {
                             <Counter Points={this.state.Points} />
                         </p>
                     </div>
-                </div> 
+                </div>
                 {//Displays new Buttons and new screen resolution, to play tetris with an Smartphone 
-                    }
+                }
                 <div className="leftSideBoard">
-                        <input type="button" value="Down" className="button_direction" onClick={() => {
-                            this.udpateMoveDown();
-                        }} />
-                        <input type="button" value="Left" className="button_direction" onClick={() => {
-                            this.udpateMoveLeft();
-                        }} />
-                    </div>
-                    <div className="rightSideBoard">
-                        <input type="button" value="Right" className="button_direction" onClick={() => {
-                            this.udpateMoveRight();
-                        }} />
-                        <input type="button" value="Rotate" className="button_direction" onClick={() => {
-                            this.updateRotate();
-                        }} />
-                    </div>
+                    <input type="button" value="Start" className="button_direction" onClick={() => {
+                        this.updateAddShape(this.createRandomShape());
+                        this.moveDownSecond();
+                        this.time_ref.current.start();
+                    }} />
+                    <input type="button" value="Down" className="button_direction" onClick={() => {
+                        this.udpateMoveDown();
+                    }} />
+                    <input type="button" value="Left" className="button_direction" onClick={() => {
+                        this.udpateMoveLeft();
+                    }} />
+                </div>
+                <div className="rightSideBoard">
+                    <input type="button" value="Right" className="button_direction" onClick={() => {
+                        this.udpateMoveRight();
+                    }} />
+                    <input type="button" value="Rotate" className="button_direction" onClick={() => {
+                        this.updateRotate();
+                    }} />
+                </div>
                 <div className="Board-screen">
                     <header className="Board-game">
                         {//Displays the entire Board
@@ -301,7 +307,7 @@ class RichardsMiniGame extends Component {
     //Move the Shape every Second Down
     moveDownSecond() {
         this.udpateMoveDown();
-        setTimeout(this.moveDownSecond, 500);
+        setTimeout(this.moveDownSecond, 1000);
     }
 
     initBoardLogic() {
@@ -690,8 +696,9 @@ class RichardsMiniGame extends Component {
     }
 
     //open the Endgame Popup
-    openPopup() {
-        openPopup(this.state.gameEndText + " You reached " + this.state.Points + " Points in " + this.InformationBoard_ref.current.time_ref.current.state.secs + " Seconds!",
+    openPopupBoard() {
+        //Popup
+        openPopup(this.state.gameEndText + " You reached " + this.state.Points + " Points in " + this.time_ref.current.state.secs + " Seconds!",
             [["Want to play another round?", () => {
                 //Set up new Game
                 for (let x = 0; x < Board_WIDTH; x++) {
@@ -703,7 +710,6 @@ class RichardsMiniGame extends Component {
                 this.setState({ Time: 0, Points: 0, gameEndText: "" }, () => ReactDOM.unmountComponentAtNode(document.getElementById('popup_container')));
             }]], true);
     }
-
     //if the game is over, the Endgame Popup will pop up and shows the Points and time
     gameEnd() {
         /*
@@ -711,13 +717,13 @@ class RichardsMiniGame extends Component {
         The State were set and afterwards the popup-function will be called with the callbackfunction 
         */
         if (this.state.Points === 0) {
-            this.setState({ gameEndText: "Do you know how to play the game? Loser!" }, () => this.openPopup());
+            this.setState({ gameEndText: "Do you know how to play the game? Loser!" }, () => this.openPopupBoard());
         }
         else if (this.state.Points <= 10) {
-            this.setState({ gameEndText: "Good" }, () => this.openPopup());
+            this.setState({ gameEndText: "Good" }, () => this.openPopupBoard());
         }
         else if (this.state.Points < 20 && this.state.Points > 10) {
-            this.setState({ gameEndText: "Well done, are you cheating ?" }, () => this.openPopup());
+            this.setState({ gameEndText: "Well done, are you cheating ?" }, () => this.openPopupBoard());
         }
         else {
             this.setState({ gameEndText: "You are ready for the World Championsship !" }, () => this.openPopup());

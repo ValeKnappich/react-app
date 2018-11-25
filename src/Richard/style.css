@@ -181,15 +181,16 @@ visibility: visible;
 .button_direction{
   visibility: hidden;
 }
-.smartphone{
-  visibility: hidden;
-}
+
 
 
 @media only screen and (max-width: 600px) {
   .button_direction{
     visibility: visible;
     margin: 10px 10px 10px 10px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
   .button_direction:disabled{
   background: #5C6E8E;
@@ -247,6 +248,9 @@ visibility: visible;
   }
   .Board-row{
     width: 200px;
+  }
+  .ControlPanel.button.important{
+    visibility: hidden;
   }
 }
 
