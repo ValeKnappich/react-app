@@ -1,65 +1,80 @@
+//Reactjs import
 import React, { Component } from 'react';
-import './style.css';
-import ArrowKeysReact from 'arrow-keys-react';
-import { Table, TableRow, TableHeader } from 'grommet';
-import '../../node_modules/grommet-css';
 import ReactDOM from "react-dom";
+//CSS import
+import './style.css';
+import '../../node_modules/grommet-css';
+//ArroyKeys import
+import ArrowKeysReact from 'arrow-keys-react';
+//Popup import
 import openPopup from '../ShareComponents/popup-tetris'
-
+//establish the Height and Width
 const Board_HEIGHT = 20;
 const Board_WIDTH = 10;
+
 const direction = { "NORTH": 1, "EAST": 2, "SOUTH": 3, "WEST": 4 }
 const movement = { "DOWN": 1, "LEFT": 2, "RIGHT": 3 }
 const rotationType = { "AXIS": 1, "DIAGONAL": 2 }
 const colors = { "I": "grayBox", "J": "greenBox", "L": "blueBox", "O": "yellowBox", "Z": "cyanBox", "T": "redBox", "S": "pinkBox", "BLANK": "whiteBox" }
 const defaultSquareClass = "square";
+//With object.freeze cant change the states
 Object.freeze(direction);
 Object.freeze(movement);
 Object.freeze(rotationType);
 Object.freeze(colors);
 
-class InformationBoard extends Component {
-    constructor() {
-        super();
-        this.state = { buttonText: "Start" };
-        this.time_ref = React.createRef();
-    }
-    render() {
-        return (<Time ref={this.time_ref} />);
-    }
 
+class Counter extends Component {
+    render() {
+        return (
+            //Completely controlled by parent over props
+            <span id="counter" style={{ margin: "10px" }} className="important">{this.props.Points}</span>
+        );
+    }
 }
+
 class Time extends Component {
     constructor() {
         super();
-        this.state = { secs: 0, gamestatus: true};
+        this.state = { secs: 0, gamestatus: true };
         this.timer = this.timer.bind(this);
         this.start = this.start.bind(this);
     }
     render() {
         return (
-                <span> {this.state.secs}</span>
+            <span id="counter" style={{ margin: "10px" }} className="important">{this.state.secs}</span>
         );
     }
     timer() {
-        if(this.state.gamestatus === false){
+        //Gamestatus false == Game is over
+        if (this.state.gamestatus === false) {
+            //Reset this timer and return the gametime
             this.reset();
             return this.state.secs;
         }
+        //Gamestatus true
         this.setState({ secs: this.state.secs + 1 });
         setTimeout(this.timer, 1000);
 
     }
     start() {
+        //start the timer
         this.reset();
         setTimeout(this.timer, 1000);
     }
     reset() {
+        //reset the timer
         this.setState({ secs: 0 });
     }
 }
 
+
 class GameBox {
+    /*
+    Each square contains a Gamebox containing the most important data.
+    In addition, a clone is created. The clone checks the subsequent operation. 
+    If the validation can be successful, the operation will be done with the Gamebox.
+    */
 
     constructor(xValue, yValue, directionValue, distanceValue, colorValue) {
         this.x = xValue;
@@ -67,29 +82,32 @@ class GameBox {
         this.dir = directionValue;
         this.distance = distanceValue;
         this.hitBottom = false;
+        this.onlyDown = false;
         this.old = [];
         this.rotation = rotationType.AXIS;
         this.color = colorValue;
     }
-
+    //move function that get a command 
     move(command) {
-        if (this.hitBottom) {
+        if (this.hitBottom && this.onlyDown === false) {
             return;
         }
         if (command === movement.DOWN) {
             this.y++;
-        } else if (command === movement.LEFT) {
+        } else if (command === movement.LEFT && this.onlyDown === false) {
             this.x--;
-        } else if (command === movement.RIGHT) {
+        } else if (command === movement.RIGHT && this.onlyDown === false) {
             this.x++;
         }
     }
-
+    //rotate function that get a command
     rotate() {
+        //catches the cases that you cant rotate a set Shape
         if (this.distance === 0 || this.hitBottom) {
             return;
         }
         switch (this.rotation) {
+            //There are two Types of Rotations: Diagonal and Axis
             case rotationType.DIAGONAL:
                 this.rotateDiagonal();
                 break;
@@ -144,23 +162,25 @@ class GameBox {
                 break;
         }
     }
-
+    //Create a Gamebox Clone Object
     clone() {
         const newBox = new GameBox(this.x, this.y, this.dir, this.distance, this.color);
         newBox.hitBottom = this.hitBottom;
         newBox.old = this;
         newBox.rotation = this.rotation;
+        newBox.onlyDown = this.onlyDown;
         return newBox;
     }
 }
 
 class Square extends Component {
+    /*
+    The component square return in HTML construct, which represents the square in the design, also contains coordinates, color, activity and 
+    */
     constructor(props) {
         super(props);
         this.state = {
             value: null,
-            active: false,
-            bottom: false,
             style: defaultSquareClass + " " + colors.BLANK,
             coordinatex: this.props.coordinatex,
             coordinatey: this.props.coordinatey,
@@ -169,19 +189,25 @@ class Square extends Component {
     render() {
         return (<button
             id={this.props.id}
+            key={this.state.coordinatex + "-" + this.state.coordinatey}
             className={this.state.style}>
             {this.state.value}
         </button>);
     }
 }
 
-
 class RichardsMiniGame extends Component {
+    /*
+    The RichardsMiniGame component returns the entire HTML construct, which represents the board's time and points in the design
+    */
     constructor() {
         super();
         this.RichardsMiniGame = [];
-        this.InformationBoard_ref = React.createRef();
-        this.state = { boxes: [], Points: 0, Time: 0, gameEndText: "No text inside" };
+        this.time_ref = React.createRef();
+        this.state = { boxes: [], Points: 10, gameEndText: "" };
+        this.moveDownSecond = this.moveDownSecond.bind(this);
+        this.udpateMoveDown = this.udpateMoveDown.bind(this);
+        //The cases what happens when you press the keys
         ArrowKeysReact.config({
             left: () => {
                 this.updateMoveLeft();
@@ -193,9 +219,10 @@ class RichardsMiniGame extends Component {
                 this.updateRotate();
             },
             down: () => {
-                this.updateMoveDown();
+                this.udpateMoveDown();
             }
         });
+        //Create references to access the square
         for (let x = 0; x < Board_WIDTH; x++) {
             let rowRefs = [];
             for (let y = 0; y < Board_HEIGHT; y++) {
@@ -206,33 +233,71 @@ class RichardsMiniGame extends Component {
     }
     render() {
         let RichardsMiniGame = [];
+        //Building the Board
         for (let y = 0; y < Board_HEIGHT; y++) {
             let row = []
             for (let x = 0; x < Board_WIDTH; x++) {
-                row.push(<Square ref={this.RichardsMiniGame[x][y]} id={x + "-" + y} coordinatex={x} coordinatey={y} />);
+                //Push Board_Wight Sqaure Compontens in a Array
+                row.push(<Square ref={this.RichardsMiniGame[x][y]} key={x + "-" + y} id={x + "-" + y} coordinatex={x} coordinatey={y} />);
             }
             RichardsMiniGame.push(<div className="Board-row">{row}</div>)
         }
+        /*
+        <div className="Pannel">
+                    {// Start Button 
+                    }
+                    <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" onClick={() => {
+                        this.updateAddShape(this.createRandomShape());
+                        this.moveDownSecond();
+                        this.time_ref.current.start();
+                    }} />
+                    <input type="button" value="Game End" onClick={() => {
+                        this.time_ref.current.setState({ gamestatus: false });
+                        this.gameEnd();
+                    }} />
+                </div>*/
         return (
             <div className="body-game">
                 <div className="Pannel">
-                    <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" onClick={() => {
+                    <input {...ArrowKeysReact.events} tabIndex="1" type="button" value="Start" className="ControlPanel button important" onClick={() => {
                         this.updateAddShape(this.createRandomShape());
-                        this.InformationBoard_ref.current.time_ref.current.start();
+                        this.moveDownSecond();
+                        this.time_ref.current.start();
                     }} />
-                    <input type="button" value="Game End" onClick={() => {
-                        this.InformationBoard_ref.current.time_ref.current.setState({gamestatus : false});
-                        this.gameEnd();
-                    }} />
+                    <div className="ControlPanel">
+                        <p className="headline">Time
+                            <Time ref={this.time_ref} />
+                        </p>
+                    </div>
+                    <div className="ControlPanel">
+                        <span className="Button_text">The more rows you delete at once, the more points you get</span>
+                        <p className="headline">Points
+                            <Counter Points={this.state.Points} />
+                        </p>
+                    </div>
                 </div>
-                <InformationBoard ref={this.InformationBoard_ref}/>
+
+                {// Displays the Time and the Points 
+                }
                 <div className="Board-screen">
                     <header className="Board-game">
+                        {// Displays the entire Board
+                        }
                         {RichardsMiniGame}
                     </header>
                 </div>
             </div>
         )
+    }
+
+    /*
+    Following are functions that relate solely to the creation and calculation of new positions of the shapes
+    */
+
+    //Move the Shape every Second Down
+    moveDownSecond() {
+        this.udpateMoveDown();
+        setTimeout(this.moveDownSecond, 1000);
     }
 
     initBoardLogic() {
@@ -253,6 +318,7 @@ class RichardsMiniGame extends Component {
         }
     }
 
+    //Calculate a random number to create a random Shape 
     getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
@@ -280,6 +346,7 @@ class RichardsMiniGame extends Component {
 
     }
 
+    //Creating the different Shapes
     createIshape() {
         let newShape = [];
         newShape.push(new GameBox(4, 1, direction.NORTH, 1, colors.I));
@@ -336,6 +403,7 @@ class RichardsMiniGame extends Component {
         return newShape;
     }
 
+
     addHitBottomBoxesToBoard(gameboard, boxes) {
         for (let i = 0; i < boxes.length; i++) {
             const box = boxes[i];
@@ -362,20 +430,51 @@ class RichardsMiniGame extends Component {
             this.addNewBoxesToBoxes(boxes, newBoxes);
             this.addBoxesToBoard(gameboard, newBoxes);
         }
+        this.hitBottomCheckOnlyDown(gameboard, newChildren);
+    }
+
+    hitBottomCheckOnlyDown(gameboard, newChildren) {
+        //from down to up
+        for (let y = Board_HEIGHT - 1; y >= 0; y--) {
+            for (let x = 0; x < Board_WIDTH; x++) {
+                const cell = gameboard[x][y];
+                //catch Error if Shape over Board_Height
+                const cellBelow = (y + 1 === Board_HEIGHT) ? null : gameboard[x][y + 1];
+
+                if (cell != null && cell.hitBottom && cell.onlyDown
+                    && (cell.y === Board_HEIGHT - 1 || (cellBelow != null && cellBelow.hitBottom && cellBelow.onlyDown === false))) {
+                    cell.onlyDown = false;
+                }
+            }
+        }
     }
 
     hitBottomCheck(gameboard, boxes) {
+
         for (let i = 0; i < boxes.length; i++) {
             const box = boxes[i];
+            const boxBelow = box.y + 1 === Board_HEIGHT ? null : gameboard[box.x][box.y + 1];
             // if the clone hits the bottom or the next boxs is already on the bottom 
-            if (box.y === Board_HEIGHT - 1 || (gameboard[box.x][box.y + 1] != null && gameboard[box.x][box.y + 1].hitBottom)) {
+            /*
+            console.log({
+                text: "hit bottom check",
+                box: box,
+                belowBox: boxBelow
+            })*/
+
+            if (box.hitBottom === false && (box.y === Board_HEIGHT - 1 || (boxBelow != null && boxBelow.hitBottom))) {
                 return true;
             }
         }
         return false;
     }
 
+
     evaluate(command, boxes) {
+        /*
+        Evalute the new position. It will calculate with the Clone Gamebox. 
+        The Gamebox contains an Array with his Childchildren (an Array which contais the other active Gameboxes)
+        */
         let actionSuccess = true;
         let newChildren = [];
         let gameboard = this.initBoardLogic();
@@ -384,7 +483,7 @@ class RichardsMiniGame extends Component {
             const box = boxes[i];
 
             // do not evaluate if is already evaluated
-            if (box.hitBottom) {
+            if (box.hitBottom && box.onlyDown === false) {
                 continue;
             }
             const childClone = box.clone();
@@ -408,8 +507,85 @@ class RichardsMiniGame extends Component {
             return gameboard;
         }
         this.hitBottomDetection(gameboard, newChildren, boxes);
+        let clearRowCount = this.checkLineFull(gameboard, newChildren, boxes);
+        this.updatePoints(clearRowCount);
         this.overrideOriginalsWithValues(newChildren);
         return gameboard;
+    }
+
+    updatePoints(clearRowCount) {
+        let newPoints = clearRowCount * clearRowCount;
+        let oldPoints = this.state.points;
+        this.setState({ points: oldPoints + newPoints });
+    }
+
+    checkLineFull(gameboard, newChildren, boxes) {
+        let rowFullCount = 0;
+        let lowestFullRow = -1;
+        for (let y = 0; y < Board_HEIGHT; y++) {
+            let rowIsFull = this.rowIsFull(gameboard, y);
+            /*console.log({
+                text: "check Line Full",
+                gameboard: gameboard,
+                y: y,
+                rowIsFull: rowIsFull
+            })*/
+
+            if (rowIsFull) {
+                rowFullCount++;
+                if (y > lowestFullRow) {
+                    lowestFullRow = y;
+                }
+                this.clearRow(gameboard, y, newChildren, boxes);
+            }
+        }
+        this.setAboveBoxesToOnlyDown(gameboard, lowestFullRow);
+        return rowFullCount;
+    }
+
+    setAboveBoxesToOnlyDown(gameboard, yLowest) {
+        for (let y = 0; y < yLowest; y++) {
+            for (let x = 0; x < Board_WIDTH; x++) {
+                const cell = gameboard[x][y];
+                if (cell != null && cell.hitBottom) {
+                    cell.onlyDown = true;
+                }
+            }
+        }
+    }
+
+    rowIsFull(gameboard, y) {
+        for (let x = 0; x < Board_WIDTH; x++) {
+            const cell = gameboard[x][y];
+
+            /*console.log({
+                text: "row is full",
+                cell: cell,
+                gameboard: gameboard,
+                y: y
+            })*/
+
+            if (!(cell != null) || (cell != null && cell.hitBottom === false)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    clearRow(gameboard, y, newChildren, boxes) {
+        for (let x = 0; x < Board_WIDTH; x++) {
+            let cell = gameboard[x][y];
+            this.removeElementFromList(newChildren, cell);
+            this.removeElementFromList(boxes, cell.old);
+        }
+    }
+
+    removeElementFromList(list, element) {
+        let index = list.indexOf(element);
+        //The splice() method changes the contents of an array by removing existing elements and/or adding new elements.
+        if (index > -1) {
+            list.splice(index, 1);
+        }
     }
 
     markAllAsBottomHit(newChildren) {
@@ -427,8 +603,10 @@ class RichardsMiniGame extends Component {
             oldChild.y = newChild.y;
             oldChild.hitBottom = newChild.hitBottom;
             oldChild.dir = newChild.dir;
+            oldChild.onlyDown = newChild.onlyDown;
         }
     }
+
 
     updateAddShape(boxes) {
         this.update(null, boxes);
@@ -446,12 +624,14 @@ class RichardsMiniGame extends Component {
         this.update(null, null);
     }
 
-    updateMoveDown() {
+    udpateMoveDown() {
         this.update(movement.DOWN, null);
     }
 
     update(command, newBoxes) {
-
+        /*
+        Updates the old Gameboxes, if the evaluation from the clone was successful 
+        */
         let boxes = this.state.boxes;
         let newBoard;
         if (newBoxes != null) {
@@ -461,6 +641,7 @@ class RichardsMiniGame extends Component {
         } else {
             newBoard = this.evaluate(command, boxes);
         }
+        //Deactivates the old Shape and activates the new Shape
         for (let x = 0; x < newBoard.length; x++) {
             const column = newBoard[x];
             for (let y = 0; y < column.length; y++) {
@@ -472,6 +653,7 @@ class RichardsMiniGame extends Component {
                 }
             }
         }
+        //Set the new Shape in the State
         this.setState({ boxes: boxes });
     }
 
@@ -482,16 +664,18 @@ class RichardsMiniGame extends Component {
         }
     }
 
+    //Set the State Square Background with the Shape color (style)
     activateSquare(x, y, style) {
         this.RichardsMiniGame[x][y].current.setState({ style: defaultSquareClass + " " + style });
     }
 
+    //Set the State Square Background white
     deactivateSqare(x, y) {
         this.RichardsMiniGame[x][y].current.setState({ style: defaultSquareClass + " " + colors.BLANK });
     }
 
+    //open the Endgame Popup
     openPopup() {
-        //Popup
         openPopup(this.state.gameEndText + " You reached " + this.state.Points + " Points in " + this.InformationBoard_ref.current.time_ref.current.state.secs + " Seconds!",
             [["Want to play another round?", () => {
                 //Set up new Game
@@ -504,8 +688,14 @@ class RichardsMiniGame extends Component {
                 this.setState({ Time: 0, Points: 0, gameEndText: "" }, () => ReactDOM.unmountComponentAtNode(document.getElementById('popup_container')));
             }]], true);
     }
+
+    //if the game is over, the Endgame Popup will pop up and shows the Points and time
     gameEnd() {
-        if (this.state.Points == 0) {
+        /*
+        Depending on how many points were scored, another message will be issued. 
+        The State were set and afterwards the popup-function will be called with the callbackfunction 
+        */
+        if (this.state.Points === 0) {
             this.setState({ gameEndText: "Do you know how to play the game? Loser!" }, () => this.openPopup());
         }
         else if (this.state.Points <= 10) {
@@ -520,4 +710,6 @@ class RichardsMiniGame extends Component {
 
     }
 }
+
+//Export the complete Game
 export default RichardsMiniGame;

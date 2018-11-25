@@ -1,132 +1,182 @@
 .redBox{
-    background: red !important;
+  background: red !important;
 }
 .blueBox{
-  background: blue  !important;
+background: blue  !important;
 }
 .grayBox{
- background: gray  !important;
+background: gray  !important;
 }
 .greenBox{
-  background: limegreen !important;
+background: limegreen !important;
 }
 .yellowBox{
-  background: yellow !important;
+background: yellow !important;
 }
 .cyanBox{
-  background: cyan !important;
+background: cyan !important;
 }
 .pinkBox{
-  background: pink !important;
+background: pink !important;
 }
 .whiteBox{
-  background: white !important;
+background: white !important;
 }
 
-  .body-game{
-    height: 100%;
-    width: 100%;
-    background-color:#282c34 !important;
-    margin: 0;
-    position: fixed;
-  }
+.important{
+font-size: 3vh;
+}
+.headline{
+display: -webkit-box;
+display: -ms-flexbox;
+display: flex;
+font-weight: bold;
+margin: 0;
+-webkit-box-align: center;
+-ms-flex-align: center;
+align-items: center;
+color: white;
+}
+.button{
+-webkit-box-flex: 1;
+-ms-flex: 1;
+flex: 1;
+margin: 5px;
+background: #466496;
+width: -webkit-fit-content;
+width: -moz-fit-content;
+width: fit-content;
+min-width: 30%;
+outline: none;
+border: 1px solid aliceblue;
+border-radius: 10px;
+color: white;
+}
+.button:disabled{
+background: #5C6E8E;
+}
 
-  .Pannel{
-    height: 100%;
-    width: 50%;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    overflow-x: hidden;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 100px;
-    margin-left: 100px;
-    left: 0;
-  }
+.ControlPanel{
+  height: 8vh;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  border-bottom: 1px solid grey;
+}
+.ControlPanel .Button_text{
+  visibility: hidden;
+  width: 200px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 50px 0 20px 0;
 
-  .Board-screen{
-    height: 100%;
-    width: 50%;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    overflow-x: hidden;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 80px;
-    right: 0;
-  }
-  
-  .Board-game{
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
-    width: 250px;
-    height:500px;
-  }
-  .Board-row:after {
-    clear: both;
-    content: "";
-    display: table;
-  }
-  .Board-row{
-    width: 250px;
-  }
-  
-  .square {
-    background: #fff;
-    border: 1px solid #999;
-    float: left;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 25px;
-    height: 25px;
-    width: 25px;
-    margin-right: -1px;
-    margin-top: -1px;
-    padding: 0;
-    text-align: center;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+.ControlPanel:hover .Button_text{
+visibility: visible;
+}
 
-  }
-  .square:focus {
-    outline: none;
-  }
-  
-  .kbd-navigation .square:focus {
-    background: #ddd;
-  }
+.counterContainer{
+  background: #809fba;
+  color: white;
+  padding: 5px;
+  width: 95%;
+  border: 1px solid black;
+  border-radius: 10px;
+  font-size: 20px;
+}
 
-  .rainbow-button {
-    width:calc(20vw + 6px);
-    height:calc(8vw + 6px);
-    background-image: linear-gradient(90deg, #00C0FF 0%, #FFCF00 49%, #FC4F4F 80%, #00C0FF 100%);
-    border-radius:5px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-transform:uppercase;
-    font-size:3vw;
-    font-weight:bold;
-  }
-  .rainbow-button:after {
-    content:attr(alt);
-    width:20vw;
-    height:8vw;
-    background-color:#191919;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .rainbow-button:hover {
-    animation:slidebg 2s linear infinite;
-  }
-  
-  @keyframes slidebg {
-    to {
-      background-position:20vw;
-    }
-  }
-  
+.body-game{
+  height: 100%;
+  width: 100%;
+  background-color:#282c34 !important;
+  margin: 0;
+  position: fixed;
+}
+
+.Pannel{
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  margin-left: auto;
+  left: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.Board-screen{
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 80px;
+  right: 0;
+}
+
+.Board-game{
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  width: 250px;
+  height:500px;
+}
+.Board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+.Board-row{
+  width: 250px;
+}
+
+.square {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 25px;
+  height: 25px;
+  width: 25px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+
+}
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  background: #ddd;
+}
+
+
