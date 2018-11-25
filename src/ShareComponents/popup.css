@@ -11,8 +11,9 @@
     left: 0;
     right: 0;
     top: 0;
-    bottom: 15vh;
+    bottom: 0;
     margin: auto;
+
     height: 0;
     width: 0;
     max-width: 90vw;

@@ -21,12 +21,14 @@
 }
 .important{
     font-size: 3vh;
+    color: black;
 }
 .headline{
     display: flex;
     font-weight: bold;
     margin: 0;
     align-items: center;
+    color: black;
 }
 .button{
     flex: 1;
