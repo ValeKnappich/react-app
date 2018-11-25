@@ -206,6 +206,8 @@ class RichardsMiniGame extends Component {
         this.state = { boxes: [], Points: 0, gameEndText: "" };
         this.moveDownSecond = this.moveDownSecond.bind(this);
         this.udpateMoveDown = this.udpateMoveDown.bind(this);
+        this.gameEnd = this.gameEnd.bind(this);
+        this.openPopupBoard = this.openPopupBoard.bind(this);
         //The cases what happens when you press the keys
         ArrowKeysReact.config({
             left: () => {
@@ -250,7 +252,6 @@ class RichardsMiniGame extends Component {
                         this.moveDownSecond();
                         this.time_ref.current.start();
                     }} />
-
                     {//Displays the Time and the Points 
                     }
                     <div className="ControlPanel">
@@ -264,25 +265,30 @@ class RichardsMiniGame extends Component {
                             <Counter Points={this.state.Points} />
                         </p>
                     </div>
-                </div> 
+                </div>
                 {//Displays new Buttons and new screen resolution, to play tetris with an Smartphone 
-                    }
+                }
                 <div className="leftSideBoard">
-                        <input type="button" value="Down" className="button_direction" onClick={() => {
-                            this.udpateMoveDown();
-                        }} />
-                        <input type="button" value="Left" className="button_direction" onClick={() => {
-                            this.udpateMoveLeft();
-                        }} />
-                    </div>
-                    <div className="rightSideBoard">
-                        <input type="button" value="Right" className="button_direction" onClick={() => {
-                            this.udpateMoveRight();
-                        }} />
-                        <input type="button" value="Rotate" className="button_direction" onClick={() => {
-                            this.updateRotate();
-                        }} />
-                    </div>
+                    <input type="button" value="Start" className="button_direction" onClick={() => {
+                        this.updateAddShape(this.createRandomShape());
+                        this.moveDownSecond();
+                        this.time_ref.current.start();
+                    }} />
+                    <input type="button" value="Down" className="button_direction" onClick={() => {
+                        this.udpateMoveDown();
+                    }} />
+                    <input type="button" value="Left" className="button_direction" onClick={() => {
+                        this.udpateMoveLeft();
+                    }} />
+                </div>
+                <div className="rightSideBoard">
+                    <input type="button" value="Right" className="button_direction" onClick={() => {
+                        this.udpateMoveRight();
+                    }} />
+                    <input type="button" value="Rotate" className="button_direction" onClick={() => {
+                        this.updateRotate();
+                    }} />
+                </div>
                 <div className="Board-screen">
                     <header className="Board-game">
                         {//Displays the entire Board
@@ -301,7 +307,7 @@ class RichardsMiniGame extends Component {
     //Move the Shape every Second Down
     moveDownSecond() {
         this.udpateMoveDown();
-        setTimeout(this.moveDownSecond, 500);
+        setTimeout(this.moveDownSecond, 1000);
     }
 
     initBoardLogic() {
@@ -458,13 +464,6 @@ class RichardsMiniGame extends Component {
             const box = boxes[i];
             const boxBelow = box.y + 1 === Board_HEIGHT ? null : gameboard[box.x][box.y + 1];
             // if the clone hits the bottom or the next boxs is already on the bottom 
-            /*
-            console.log({
-                text: "hit bottom check",
-                box: box,
-                belowBox: boxBelow
-            })*/
-
             if (box.hitBottom === false && (box.y === Board_HEIGHT - 1 || (boxBelow != null && boxBelow.hitBottom))) {
                 return true;
             }
@@ -478,26 +477,24 @@ class RichardsMiniGame extends Component {
         Evalute the new position. It will calculate with the Clone Gamebox. 
         The Gamebox contains an Array with his Childchildren (an Array which contais the other active Gameboxes)
         */
+       
         let actionSuccess = true;
         let newChildren = [];
         let gameboard = this.initBoardLogic();
         this.addHitBottomBoxesToBoard(gameboard, boxes);
         for (let i = 0; i < boxes.length; i++) {
             const box = boxes[i];
-
             // do not evaluate if is already evaluated
             if (box.hitBottom && box.onlyDown === false) {
                 continue;
             }
             const childClone = box.clone();
             this.doAction(childClone, command);
-
             // if the clone hit something or is out of bounds
             if (childClone.x < 0 || childClone.y < 0 || childClone.x === Board_WIDTH || gameboard[childClone.x][childClone.y] != null) {
                 actionSuccess = false;
                 break;
             }
-
             // Mark as evaluated and remember in array
             newChildren.push(childClone);
             gameboard[childClone.x][childClone.y] = childClone;
@@ -510,8 +507,8 @@ class RichardsMiniGame extends Component {
             return gameboard;
         }
         this.hitBottomDetection(gameboard, newChildren, boxes);
-        let clearRowCount = this.checkLineFull(gameboard, newChildren, boxes);
-        this.updatePoints(clearRowCount);
+        
+        this.checkLineFull(gameboard, newChildren, boxes);
         this.overrideOriginalsWithValues(newChildren);
         return gameboard;
     }
@@ -519,7 +516,7 @@ class RichardsMiniGame extends Component {
     updatePoints(clearRowCount) {
         let newPoints = clearRowCount * clearRowCount;
         let oldPoints = this.state.Points;
-        this.setState({ Points: oldPoints + newPoints }); //Points wurden klein geschrieben
+        this.setState({ Points: oldPoints + newPoints },this.gameEnd());
     }
 
     checkLineFull(gameboard, newChildren, boxes) {
@@ -527,29 +524,29 @@ class RichardsMiniGame extends Component {
         let lowestFullRow = -1;
         for (let y = 0; y < Board_HEIGHT; y++) {
             let rowIsFull = this.rowIsFull(gameboard, y);
-            /*console.log({
-                text: "check Line Full",
-                gameboard: gameboard,
-                y: y,
-                rowIsFull: rowIsFull
-            })*/
-
             if (rowIsFull) {
                 rowFullCount++;
                 if (y > lowestFullRow) {
                     lowestFullRow = y;
                 }
-                console.log({
-                    text: "row is full",
-                    gameboard: gameboard,
-                    newChildren: newChildren,
-                    boxes: boxes
-                })
+
                 this.clearRow(gameboard, y, newChildren, boxes);
+                this.setRowdown(gameboard, boxes);
+                this.updatePoints(rowFullCount);
             }
         }
         this.setAboveBoxesToOnlyDown(gameboard, lowestFullRow);
-        return rowFullCount;
+    }
+
+    setRowdown(gameboard, boxes){
+        for (let y = 0; y < Board_HEIGHT; y++) {
+            for (let x = 0; x < Board_WIDTH; x++) {
+            const cell = gameboard[x][y];
+            if(cell != null ){
+                cell.y++;
+            }
+            }
+        }
     }
 
     setAboveBoxesToOnlyDown(gameboard, yLowest) {
@@ -558,7 +555,6 @@ class RichardsMiniGame extends Component {
                 const cell = gameboard[x][y];
                 if (cell != null && cell.hitBottom) {
                     cell.onlyDown = true;
-                    console.log("setAboveBoxes to Only down");
                 }
             }
         }
@@ -567,14 +563,6 @@ class RichardsMiniGame extends Component {
     rowIsFull(gameboard, y) {
         for (let x = 0; x < Board_WIDTH; x++) {
             const cell = gameboard[x][y];
-
-            /*console.log({
-                text: "row is full",
-                cell: cell,
-                gameboard: gameboard,
-                y: y
-            })*/
-
             if (!(cell != null) || (cell != null && cell.hitBottom === false)) {
                 return false;
             }
@@ -614,11 +602,6 @@ class RichardsMiniGame extends Component {
             oldChild.hitBottom = newChild.hitBottom;
             oldChild.dir = newChild.dir;
             oldChild.onlyDown = newChild.onlyDown;
-            console.log({
-                text: "New Old Child",
-                oldChild: newChild,
-                newChild: oldChild
-            });
         }
     }
 
@@ -690,8 +673,9 @@ class RichardsMiniGame extends Component {
     }
 
     //open the Endgame Popup
-    openPopup() {
-        openPopup(this.state.gameEndText + " You reached " + this.state.Points + " Points in " + this.InformationBoard_ref.current.time_ref.current.state.secs + " Seconds!",
+    openPopupBoard() {
+        //Popup
+        openPopup(this.state.gameEndText + " You reached " + this.state.Points + " Points in " + this.time_ref.current.state.secs + " Seconds!",
             [["Want to play another round?", () => {
                 //Set up new Game
                 for (let x = 0; x < Board_WIDTH; x++) {
@@ -703,7 +687,6 @@ class RichardsMiniGame extends Component {
                 this.setState({ Time: 0, Points: 0, gameEndText: "" }, () => ReactDOM.unmountComponentAtNode(document.getElementById('popup_container')));
             }]], true);
     }
-
     //if the game is over, the Endgame Popup will pop up and shows the Points and time
     gameEnd() {
         /*
@@ -711,13 +694,13 @@ class RichardsMiniGame extends Component {
         The State were set and afterwards the popup-function will be called with the callbackfunction 
         */
         if (this.state.Points === 0) {
-            this.setState({ gameEndText: "Do you know how to play the game? Loser!" }, () => this.openPopup());
+            this.setState({ gameEndText: "Do you know how to play the game? Loser!" }, () => this.openPopupBoard());
         }
         else if (this.state.Points <= 10) {
-            this.setState({ gameEndText: "Good" }, () => this.openPopup());
+            this.setState({ gameEndText: "Good" }, () => this.openPopupBoard());
         }
         else if (this.state.Points < 20 && this.state.Points > 10) {
-            this.setState({ gameEndText: "Well done, are you cheating ?" }, () => this.openPopup());
+            this.setState({ gameEndText: "Well done, are you cheating ?" }, () => this.openPopupBoard());
         }
         else {
             this.setState({ gameEndText: "You are ready for the World Championsship !" }, () => this.openPopup());
