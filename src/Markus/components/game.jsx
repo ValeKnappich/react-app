@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import Column from "./column";
 import Modal from "./modal";
-import '../basic.css';
+import '../basics.css'
 
-class MarkusMiniGame extends Component {
+class Game extends Component {
   constructor() {
     super();
     this.state = {
+		//array culumns becomes the container for the column components
       columns: [
         { id: 0 },
         { id: 1 },
@@ -17,14 +18,20 @@ class MarkusMiniGame extends Component {
         { id: 6 }
       ],
       playerColor: "yellow",
-      winner: "blanc"
+	  //variable for checking the winner
+      winner: "blanc",
+	  //variable to check weather its a draw
+      draw: false
     };
+	//assigns the references of each field in an array
     this.columns = [];
     for (let i = 0; i <= 6; i++) {
       this.columns[i] = React.createRef();
     }
     this.modal = React.createRef();
+	//"gameArray" contains the color statuses of each column
     this.gameArray = [];
+    this.buttonEnabled = [true, true, true, true, true, true, true];
     this.setGameArray = this.setGameArray.bind(this);
     this.switchPlayer = this.switchPlayer.bind(this);
     this.getTriangleColor = this.getTriangleColor.bind(this);
@@ -36,12 +43,14 @@ class MarkusMiniGame extends Component {
     this.displayWinner = this.displayWinner.bind(this);
     this.colorToGerman = this.colorToGerman.bind(this);
     this.resetAll = this.resetAll.bind(this);
+    this.checkDraw = this.checkDraw.bind(this);
   }
 
   setWinner(color) {
     this.setState({ winner: color });
   }
-
+	
+	//set the color statusses of each column in the array
   setGameArray() {
     for (let i = 0; i <= 6; i++) {
       this.gameArray[i] = this.columns[i].current.fieldArray;
@@ -68,10 +77,11 @@ class MarkusMiniGame extends Component {
 
   displayWinner() {
     let classes = "winner_";
-    classes += this.state.winner === "red" ? "red" : "yellow";
+    classes += this.state.winner;
     return classes;
   }
 
+  //checks if the rule for a vertical win is true or false
   checkVertical(columnIndex, fieldIndex) {
     let color = this.gameArray[columnIndex][fieldIndex];
     if (fieldIndex >= 3) {
@@ -87,7 +97,7 @@ class MarkusMiniGame extends Component {
     }
     return true;
   }
-
+	//checks if the rule for a horizontal win is true or false
   checkHorizontal(columnIndex, fieldIndex) {
     let color = this.gameArray[columnIndex][fieldIndex];
     let counter = 1;
@@ -113,7 +123,8 @@ class MarkusMiniGame extends Component {
       return true;
     }
   }
-
+	
+	//checks if the rule for a diagonal win is true or false
   checkDiagonal(columnIndex, fieldIndex) {
     let color = this.gameArray[columnIndex][fieldIndex];
     let counterLeftUp = 1;
@@ -185,15 +196,27 @@ class MarkusMiniGame extends Component {
     }
   }
 
+  checkDraw() {
+    let check = false;
+    for (let k = 0; k <= 6; k++) {
+      check = check || this.buttonEnabled[k];
+    }
+    if (check === false) {
+      this.setState({ draw: true });
+    }
+  }
+	
+	//translate the playorcolor in the code to german for display purposes
   colorToGerman() {
     let color = this.state.winner === "red" ? "Rot" : "Gelb";
     return color;
   }
 
   resetAll() {
-    this.setState({ playerColor: "yellow", winner: "blanc" });
+    this.setState({ playerColor: "yellow", winner: "blanc", draw: false });
     for (let i = 0; i <= 6; i++) {
       this.columns[i].current.resetFields();
+      this.buttonEnabled[i] = true;
     }
   }
 
@@ -211,6 +234,8 @@ class MarkusMiniGame extends Component {
             setGameArray={this.setGameArray}
             checkWin={this.checkWin}
             setWinner={this.setWinner}
+            checkDraw={this.checkDraw}
+            buttonEnabled={this.buttonEnabled}
           />
         ))}
         <Modal
@@ -219,11 +244,11 @@ class MarkusMiniGame extends Component {
           colorToGerman={this.colorToGerman}
           displayWinner={this.displayWinner}
           winner={this.state.winner}
+          draw={this.state.draw}
         />
       </div>
     );
   }
 }
 
-export default MarkusMiniGame;
-
+export default Game;

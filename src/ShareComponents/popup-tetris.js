@@ -19,13 +19,12 @@ class Popup extends Component{
         //create buttons' html tags from given button information
         const buttons = this.props.buttons.map((button, index)=><button type="button" key={button[0]} className="button" id={"popup_button_" + index} onClick={button[1]} style={{height: "3rem"}}>{button[0]}</button>);
         //render input-field?
-        const input = this.props.input ? <input id="popup_input" type="text"/> : null;
+        //const input = this.props.input ? <input id="popup_input" type="text"/> : null;
         //Workaround for an animation
         setTimeout(()=>{document.getElementsByClassName("popup")[0].classList.add("popup_visible"); },1);
         return (
             <form className="popup" onSubmit={this.props.buttons[this.props.buttons.length-1][1]}>
                 <div style={{fontSize: "larger", fontWeight: "bold", whiteSpace: "pre-wrap", textAlign: "center"}}>{this.props.message}</div>
-                {input}
                 <div style={{display: 'flex', width: '100%'}}>{buttons}</div>
             </form>
         );

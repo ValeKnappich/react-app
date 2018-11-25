@@ -10,6 +10,9 @@ Wenn window.scenarioFlag = 0 ist, dann ist es der Modus 2-Player
 Wenn window.scenarioFlag = 1 ist, dann ist es normal der Modus 1-Player(You start). Nur wenn man Button 1-Player(crazy Robot starts) clickt, befindet man sich stattdessen in diesem Modus*/
 window.scenarioFlag = 1;
 
+//Für Button um Spiel zu reseten(ist für Fallunterscheidung vonnötten, damit man danach nicht auf ein falschen Spielmodus zurücksetzt)
+window.scenarioFlagPlayAgain = 1;
+
 // Definiert wer am Zug ist. Nur relevant bei 2
 window.playerOnTurn = 1; // Definiert wer am Zug ist. Nur relevant im Modus 2-Player. Bei den anderen beiden Modi ist man immer O
 
@@ -18,7 +21,7 @@ window.playerOnTurn = 1; // Definiert wer am Zug ist. Nur relevant im Modus 2-Pl
 class PaulsMiniGame extends Component {
     render() {
         return (
-            <Container  />
+            <Container/>
         );
     }
 }
@@ -36,7 +39,7 @@ class Container extends React.Component {
         for (let i = 0; i < 13; i++) {
             tempFields[i] = -1;
         }
-        //macht die 12 Felder zu states, mit denen dauerhaft gearbeitet, sozusagen, das Herzstück des Codes darstellen
+        //macht die 13 Felder zu states, mit denen dauerhaft gearbeitet, sozusagen, das Herzstück des Codes darstellen
         this.state = {
             fields: tempFields,
         };
@@ -56,7 +59,10 @@ class Container extends React.Component {
             fieldValue = undefined;
 
         //verhindert das Beschreiben von Feldern, wo bereits X oder O gesetzt wurde
-        let tempFields = this.state.fields.slice();
+        let tempFields = new Array(FIELDS + 3);
+        for (let i = 0; i < 13; i++) {
+            tempFields[i] = this.state.fields[i];
+        }
         if (!(tempFields[i] === -1)) {
             return (
                 <button className="button2"
@@ -66,8 +72,8 @@ class Container extends React.Component {
         }
 
         //sorgt dafür, dass wenn jemand gewonnen hat,  man keine weiteren Felder beschreiben kann
-        if (this.result(this.state.fields.slice()) === "X wins" || this.result(this.state.fields.slice()) === "O wins"
-            || this.result(this.state.fields.slice()) === "You lose xD" || this.result(this.state.fields.slice()) === "You win QQ") {
+        if (this.result(tempFields) === "X wins" || this.result(tempFields) === "O wins"
+            || this.result(tempFields) === "You lose xD" || this.result(tempFields) === "You win QQ") {
             return (
                 <button className="button2"
                 >{fieldValue}
@@ -79,7 +85,7 @@ class Container extends React.Component {
         if (window.scenarioFlag === 0) {
             return (
                 <button className="button2"
-                    onClick={() => this.action(i)}
+                        onClick={() => this.action(i)}
                 >{fieldValue}
                 </button>
             );
@@ -89,7 +95,7 @@ class Container extends React.Component {
         if (window.scenarioFlag === 1) {
             return (
                 <button className="button2"
-                    onClick={() => this.actionKI(i)}
+                        onClick={() => this.actionKI(i)}
                 >{fieldValue}
                 </button>
             );
@@ -98,39 +104,53 @@ class Container extends React.Component {
 
     //sorgt für die Darstellung des Buttons 2-Player und ruft die Funktion this.reset() bei klick auf, die diesen Modus einleitet
     inputModeField1() {
-            return (
-                <Mode_1
-                    id="mode_1"
-                    onClick={() => this.mode_1()}
-                >2-Player
-                </Mode_1>
-            );
-    }
-
-    //sorgt für die Darstellung des Buttons 1-Player (Crazy Robot starts) und ruft die Funktion this.mode_2() bei klick auf, die diesen Modus einleutet
-    inputModeField2() {
         return (
-            <Mode_2
-                onClick={() => this.mode_2()}
-            >
-            </Mode_2>
+            <Mode1
+                id="mode1"
+                onClick={() => this.mode1()}
+            >2-Player
+            </Mode1>
         );
     }
 
-    //sorgt für die Darstellung des Buttons 1-Player (You start) und ruft die Funktion this.mode_3() bei klick auf, die diesen Modus einleutet
+    //sorgt für die Darstellung des Buttons 1-Player (Crazy Robot starts) und ruft die Funktion this.Mode2() bei klick auf, die diesen Modus einleutet
+    inputModeField2() {
+        return (
+            <Mode2
+                onClick={() => this.mode2()}
+            >
+            </Mode2>
+        );
+    }
+
+    //sorgt für die Darstellung des Buttons 1-Player (You start) und ruft die Funktion this.Mode3() bei klick auf, die diesen Modus einleutet
     inputModeField3() {
         return (
-            <Mode_3
-                onClick={() => this.mode_3()}
+            <Mode3
+                onClick={() => this.mode3()}
             >
-            </Mode_3>
+            </Mode3>
+        );
+    }
+
+    //wird genutzt um das Spiel zurückzusetzen
+    inputModeField4() {
+        return (
+            <Reset
+                id="reset"
+                onClick={() => this.reset()}
+            >play again
+            </Reset>
         );
     }
 
     //wird durch klicken des Button eingeleitet  und leitet neues Spiel im Modus 2-Player ein
-    mode_1() {
+    mode1() {
         //alle Felder auf -1 setzen
-        let tempFields = this.state.fields.slice();
+        let tempFields = new Array(FIELDS + 3);
+        for (let i = 0; i < 13; i++) {
+            tempFields[i] = this.state.fields[i];
+        }
         for (let i = 0; i < 10; i++) {
             tempFields[i] = -1
         }
@@ -141,17 +161,19 @@ class Container extends React.Component {
         window.playerOnTurn = 0;
         window.scenarioFlag = 0;
         // Button des aktiven Spielmodus highlighten
-        document.getElementById("mode_1").style.backgroundColor = "khaki";
-        document.getElementById("mode_2").style.backgroundColor = "buttonface";
-        document.getElementById("mode_3").style.backgroundColor = "buttonface";
+        document.getElementById("mode1").style.backgroundColor = "khaki";
+        document.getElementById("mode2").style.backgroundColor = "buttonface";
+        document.getElementById("mode3").style.backgroundColor = "buttonface";
     }
 
 
-
     //wird durch klick des  Button eingeleitet  und leitet  neues Spiel im Modus 1-Player (Crazy Robot starts) ein
-    mode_2() {
+    mode2() {
         //alle Felder auf -1 setzen
-        let tempFields = this.state.fields.slice();
+        let tempFields = new Array(FIELDS + 3);
+        for (let i = 0; i < 13; i++) {
+            tempFields[i] = this.state.fields[i];
+        }
         for (let i = 0; i < 10; i++) {
             tempFields[i] = -1
         }
@@ -163,16 +185,20 @@ class Container extends React.Component {
         //durch dieses setzen im "Voraus" wird dafür gesorgt, dass der Computer anfängt
         tempFields[4] = 'X';
         window.scenarioFlag = 1;
+        window.scenarioFlagPlayAgain=0;
         // Button des aktiven Spielmodus highlighten
-        document.getElementById("mode_1").style.backgroundColor = "buttonface";
-        document.getElementById("mode_2").style.backgroundColor = "khaki";
-        document.getElementById("mode_3").style.backgroundColor = "buttonface";
+        document.getElementById("mode1").style.backgroundColor = "buttonface";
+        document.getElementById("mode2").style.backgroundColor = "khaki";
+        document.getElementById("mode3").style.backgroundColor = "buttonface";
     }
 
     //wird durch klick des  Button eingeleitet  und leitet  neues  Spiel im Modus 1-Player  (You start) ein
-    mode_3() {
+    mode3() {
         //alle Felder auf -1 setzen
-        let tempFields = this.state.fields.slice();
+        let tempFields = new Array(FIELDS + 3);
+        for (let i = 0; i < 13; i++) {
+            tempFields[i] = this.state.fields[i];
+        }
         for (let i = 0; i < 10; i++) {
             tempFields[i] = -1
         }
@@ -182,15 +208,38 @@ class Container extends React.Component {
         //flags entsprechend anpassen
         window.playerOnTurn = 1;
         window.scenarioFlag = 1;
+        window.scenarioFlagPlayAgain=1;
         // Button des aktiven Spielmodus highlighten
-        document.getElementById("mode_1").style.backgroundColor = "buttonface";
-        document.getElementById("mode_2").style.backgroundColor = "buttonface";
-        document.getElementById("mode_3").style.backgroundColor = "khaki";
+        document.getElementById("mode1").style.backgroundColor = "buttonface";
+        document.getElementById("mode2").style.backgroundColor = "buttonface";
+        document.getElementById("mode3").style.backgroundColor = "khaki";
     }
+
+    //wird durch klick des  reset-Buttons eingeleitet  und setzt Spiel zurück(dafür wird einfach die passende Funktion des Spielmodi aufgerufen)
+    reset() {
+        if(window.scenarioFlag === 0)
+        {
+            this.mode1();
+            return;
+        }
+        if(window.scenarioFlag === 1 && window.scenarioFlagPlayAgain===0)
+        {
+            this.mode2();
+            return;
+        }
+        if(window.scenarioFlag === 1 && window.scenarioFlagPlayAgain===1)
+        {
+            this.mode3();
+        }
+    }
+
 
     //befüllt das Spielfeld im Modus 2-PLayer. Je nachdem welcher Spieler am Zug ist, wird X oder O gesetzt. Danach wird window.playerOnTurn umgeändert, dass im nächsten Zug der andere sein Zeichen machen kann
     action(i) {
-        let tempFields = this.state.fields.slice();
+        let tempFields = new Array(FIELDS + 3);
+        for (let i = 0; i < 13; i++) {
+            tempFields[i] = this.state.fields[i];
+        }
         if (window.playerOnTurn === 0) {
             tempFields[i] = 'X';
             window.playerOnTurn = 1;
@@ -207,13 +256,20 @@ class Container extends React.Component {
 
     //befüllt das Spielfeld im Modus 1-Player(You start) und 1-Player(crazy computer starts). Selber setzt man immer O. Der Computer immer X
     actionKI(i) {
-        let tempFields = this.state.fields.slice();
-
+        let tempFields = new Array(FIELDS + 3);
+        for (let i = 0; i < 13; i++) {
+            tempFields[i] = this.state.fields[i];
+        }
         //setzen der eigenen Eingabe
         tempFields[i] = 'O';
         this.setState({
             fields: tempFields,
         });
+
+        if (this.result(tempFields) === "X wins" || this.result(tempFields) === "O wins"
+            || this.result(tempFields) === "You lose xD" || this.result(tempFields) === "You win QQ") {
+            return;
+        }
 
         //ab hier wird ein passendes Feld für den Computer gesucht und dann gesetzt
         // aufrufen der Funktion estimateBestField. mit diesen Parametern ermittelt sie, ob es ein Feld gibt, mit dem der Computer direkt gewinnen kann
@@ -262,7 +318,11 @@ class Container extends React.Component {
 
     //Findet über window.playerOnTurn heraus wer am Zug ist und gibt einen Text dazu aus, der später gerendert wird
     nextPlayer() {
-        if (this.result(this.state.fields.slice()))
+        let tempFields = new Array(FIELDS + 3);
+        for (let i = 0; i < 13; i++) {
+            tempFields[i] = this.state.fields[i];
+        }
+        if (this.result(tempFields))
             return;
         if (window.playerOnTurn === 1 && window.scenarioFlag === 1) {
             return "You are O. It is your turn";
@@ -283,11 +343,11 @@ class Container extends React.Component {
     result(tempFields2) {
         let tempFields = tempFields2;
         if ((tempFields[0] === 'X' && tempFields[1] === 'X' && tempFields[2] === 'X')
-            || (tempFields[3] === 'X' && tempFields[4] === 'X' && tempFields[5] === 'X')
             || (tempFields[6] === 'X' && tempFields[7] === 'X' && tempFields[8] === 'X')
             || (tempFields[0] === 'X' && tempFields[3] === 'X' && tempFields[6] === 'X')
             || (tempFields[1] === 'X' && tempFields[4] === 'X' && tempFields[7] === 'X')
             || (tempFields[2] === 'X' && tempFields[5] === 'X' && tempFields[8] === 'X')
+            || (tempFields[3] === 'X' && tempFields[4] === 'X' && tempFields[5] === 'X')
             || (tempFields[0] === 'X' && tempFields[4] === 'X' && tempFields[8] === 'X')
             || (tempFields[2] === 'X' && tempFields[4] === 'X' && tempFields[6] === 'X')) {
             if (window.scenarioFlag === 1) {
@@ -298,10 +358,10 @@ class Container extends React.Component {
 
         if ((tempFields[0] === 'O' && tempFields[1] === 'O' && tempFields[2] === 'O')
             || (tempFields[3] === 'O' && tempFields[4] === 'O' && tempFields[5] === 'O')
-            || (tempFields[6] === 'O' && tempFields[7] === 'O' && tempFields[8] === 'O')
             || (tempFields[0] === 'O' && tempFields[3] === 'O' && tempFields[6] === 'O')
             || (tempFields[1] === 'O' && tempFields[4] === 'O' && tempFields[7] === 'O')
             || (tempFields[2] === 'O' && tempFields[5] === 'O' && tempFields[8] === 'O')
+            || (tempFields[6] === 'O' && tempFields[7] === 'O' && tempFields[8] === 'O')
             || (tempFields[0] === 'O' && tempFields[4] === 'O' && tempFields[8] === 'O')
             || (tempFields[2] === 'O' && tempFields[4] === 'O' && tempFields[6] === 'O')) {
             if (window.scenarioFlag === 1) {
@@ -329,13 +389,13 @@ class Container extends React.Component {
         let fieldOutput = []; // die ist das letzte, sprich das Ausgabearray
 
         for (let i = 0; i < FIELDS / 3; i++) {
-            arraybuilder1.push(<td className="tables">
+            arraybuilder1.push(<td key={i*3} className="tables">
                 {this.inputFields(i * 3)}
             </td>)
-            arraybuilder1.push(<td className="tables">
+            arraybuilder1.push(<td key={i*3+1} className="tables">
                 {this.inputFields(i * 3 + 1)}
             </td>)
-            arraybuilder1.push(<td className="tables">
+            arraybuilder1.push(<td key={i*3+2} className="tables">
                 {this.inputFields(i * 3 + 2)}
             </td>)
 
@@ -344,16 +404,20 @@ class Container extends React.Component {
         }
 
         //fieldOutput enthält nun das gesamte Spielfeld
-        fieldOutput.push(<table className="tables">{arraybuilder2}</table>);
+        fieldOutput.push(<table className="tables"><tbody>{arraybuilder2}</tbody></table>);
 
-        //Zusammenbauen von den 3 Spieldmodi-Buttons zu einem Feld
+        //Zusammenbauen von den 3 Spieldmodi-Buttons + Resetbuttons zu einem Feld
         let ModeButtons = [];
         ModeButtons.push(<div>
-            <div>{this.inputModeField1(9)} {this.inputModeField2(10)} {this.inputModeField3(11)}</div>
+            <div>{this.inputModeField4(12)}{this.inputModeField1(9)} {this.inputModeField2(10)} {this.inputModeField3(11)}</div>
         </div>)
 
         //Ermittlung wer am Zug ist und ob jemand gewonnen hat. Ausgabe ob jemand gewonnen hat, erfolgt nur, wenn das Spielt beendet ist - in diesem Fall wird auch nicht mehr ausgegeben, wer am Zug ist
-        let result = this.result(this.state.fields.slice())
+        let tempFields = new Array(FIELDS + 3);
+        for (let i = 0; i < 13; i++) {
+            tempFields[i] = this.state.fields[i];
+        }
+        let result = this.result(tempFields)
         let nextPlayer = this.nextPlayer();
 
         //gif wird ausgegeben, wenn man gegen den PC verliert oder patt spielt
@@ -466,43 +530,75 @@ function estimateBestField(tempFields2, token, token2, token3) {
 }
 
 //Klassenbaustein für den Spielmodus 2-Player
-class Mode_1 extends React.Component {
+class Mode1 extends React.Component {
     render() {
         return (
-            <button
-                id="mode_1"
-                onClick={() => this.props.onClick()}
+            <div
+                className="general"
             >
-                2-Player
-            </button>
+                <button
+                    id="mode1"
+                    onClick={() => this.props.onClick()}
+                >
+                    2-Player
+                </button>
+            </div>
         );
     }
 }
 
 //Klassenbaustein für den Spielmodus  1-Player (Crazy Robot starts)
-class Mode_2 extends React.Component {
+class Mode2 extends React.Component {
     render() {
         return (
-            <button
-                id="mode_2"
-                onClick={() => this.props.onClick()}
+            <div
+                className="general"
             >
-                1-Player (Crazy Robot starts)
-            </button>
+                <button
+                    id="mode2"
+                    onClick={() => this.props.onClick()}
+                >
+                    1-Player (Crazy Robot starts)
+                </button>
+            </div>
         );
     }
 }
 
 //Klassenbaustein für den Spielmodus  1-Player (You start)
-class Mode_3 extends React.Component {
+class Mode3 extends React.Component {
     render() {
         return (
-            <button
-                id="mode_3"
-                onClick={() => this.props.onClick()}
+            <div
+                className="general"
             >
-                1-Player (You start)
-            </button>
+                <button
+                    id="mode3"
+                    onClick={() => this.props.onClick()}
+                >
+                    1-Player (You start)
+                </button>
+            </div>
+
+        );
+    }
+}
+
+//Klassenbaustein um den aktiven Spielmodus zurückzusetzen
+class Reset extends React.Component {
+    render() {
+        return (
+            <div
+                className="general"
+            >
+                <button
+                    id="reset"
+                    onClick={() => this.props.onClick()}
+                >
+                   reset
+                </button>
+            </div>
+
         );
     }
 }

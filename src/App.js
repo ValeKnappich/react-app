@@ -16,7 +16,7 @@ class App extends Component {
     }
     render() {
         return (
-            <Tabs style={{borderBottom: '1px solid black'}} responsive={false}>
+            <Tabs id="Tabbar" responsive={false} activeIndex={2} >  
                 <Tab title="Vale">
                     <ValesMiniGame parent={this}/>
                 </Tab>
