@@ -665,13 +665,18 @@ class RichardsMiniGame extends Component {
 
     //Set the State Square Background with the Shape color (style)
     activateSquare(x, y, style) {
-        this.RichardsMiniGame[x][y].current.setState({ style: defaultSquareClass + " " + style });
+        try {
+            this.RichardsMiniGame[x][y].current.setState({style: defaultSquareClass + " " + style});
+        }catch(e){}
     }
 
     //Set the State Square Background white
     deactivateSqare(x, y) {
-        this.RichardsMiniGame[x][y].current.setState({ style: defaultSquareClass + " " + colors.BLANK });
+        try {
+            this.RichardsMiniGame[x][y].current.setState({style: defaultSquareClass + " " + colors.BLANK});
+        }catch(e){}
     }
+
 
     //open the Endgame Popup
     openPopup() {

@@ -387,20 +387,21 @@ class Container extends React.Component {
         let arraybuilder2 = [];
         let arraybuilder1 = [];
         let fieldOutput = []; // die ist das letzte, sprich das Ausgabearray
-
         for (let i = 0; i < FIELDS / 3; i++) {
-            arraybuilder1.push(<td key={i} className="tables">
+            let j = 0;
+            arraybuilder1.push(<td key={j++ + 3*i} className="tables">
                 {this.inputFields(i * 3)}
-            </td>)
-            arraybuilder1.push(<td key={i+1} className="tables">
+            </td>);
+            arraybuilder1.push(<td key={j++ + 3*i} className="tables">
                 {this.inputFields(i * 3 + 1)}
-            </td>)
-            arraybuilder1.push(<td key={i+2} className="tables">
+            </td>);
+            arraybuilder1.push(<td key={j + 3*i} className="tables">
                 {this.inputFields(i * 3 + 2)}
-            </td>)
+            </td>);
 
             arraybuilder2.push(<tr className="tables">{arraybuilder1}</tr>);
             arraybuilder1 = [];
+            j++;
         }
 
         //fieldOutput enthält nun das gesamte Spielfeld

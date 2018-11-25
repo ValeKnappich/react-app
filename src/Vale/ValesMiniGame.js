@@ -23,6 +23,7 @@ export default class ValesMiniGame extends Component {
         this.controlPanel = React.createRef();
         this.scoreboard = React.createRef();
     }
+
     render() {
         return (
             <div className="App">

@@ -16,7 +16,7 @@ class App extends Component {
     }
     render() {
         return (
-            <Tabs id="Tabbar" responsive={false} activeIndex={2} >  
+            <Tabs id="Tabbar" responsive={false} >
                 <Tab title="Vale">
                     <ValesMiniGame parent={this}/>
                 </Tab>
