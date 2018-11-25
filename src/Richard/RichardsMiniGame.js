@@ -464,13 +464,6 @@ class RichardsMiniGame extends Component {
             const box = boxes[i];
             const boxBelow = box.y + 1 === Board_HEIGHT ? null : gameboard[box.x][box.y + 1];
             // if the clone hits the bottom or the next boxs is already on the bottom 
-            /*
-            console.log({
-                text: "hit bottom check",
-                box: box,
-                belowBox: boxBelow
-            })*/
-
             if (box.hitBottom === false && (box.y === Board_HEIGHT - 1 || (boxBelow != null && boxBelow.hitBottom))) {
                 return true;
             }
@@ -484,26 +477,24 @@ class RichardsMiniGame extends Component {
         Evalute the new position. It will calculate with the Clone Gamebox. 
         The Gamebox contains an Array with his Childchildren (an Array which contais the other active Gameboxes)
         */
+       
         let actionSuccess = true;
         let newChildren = [];
         let gameboard = this.initBoardLogic();
         this.addHitBottomBoxesToBoard(gameboard, boxes);
         for (let i = 0; i < boxes.length; i++) {
             const box = boxes[i];
-
             // do not evaluate if is already evaluated
             if (box.hitBottom && box.onlyDown === false) {
                 continue;
             }
             const childClone = box.clone();
             this.doAction(childClone, command);
-
             // if the clone hit something or is out of bounds
             if (childClone.x < 0 || childClone.y < 0 || childClone.x === Board_WIDTH || gameboard[childClone.x][childClone.y] != null) {
                 actionSuccess = false;
                 break;
             }
-
             // Mark as evaluated and remember in array
             newChildren.push(childClone);
             gameboard[childClone.x][childClone.y] = childClone;
@@ -516,8 +507,8 @@ class RichardsMiniGame extends Component {
             return gameboard;
         }
         this.hitBottomDetection(gameboard, newChildren, boxes);
-        let clearRowCount = this.checkLineFull(gameboard, newChildren, boxes);
-        this.updatePoints(clearRowCount);
+        
+        this.checkLineFull(gameboard, newChildren, boxes);
         this.overrideOriginalsWithValues(newChildren);
         return gameboard;
     }
@@ -525,7 +516,7 @@ class RichardsMiniGame extends Component {
     updatePoints(clearRowCount) {
         let newPoints = clearRowCount * clearRowCount;
         let oldPoints = this.state.Points;
-        this.setState({ Points: oldPoints + newPoints }); //Points wurden klein geschrieben
+        this.setState({ Points: oldPoints + newPoints },this.gameEnd());
     }
 
     checkLineFull(gameboard, newChildren, boxes) {
@@ -533,29 +524,29 @@ class RichardsMiniGame extends Component {
         let lowestFullRow = -1;
         for (let y = 0; y < Board_HEIGHT; y++) {
             let rowIsFull = this.rowIsFull(gameboard, y);
-            /*console.log({
-                text: "check Line Full",
-                gameboard: gameboard,
-                y: y,
-                rowIsFull: rowIsFull
-            })*/
-
             if (rowIsFull) {
                 rowFullCount++;
                 if (y > lowestFullRow) {
                     lowestFullRow = y;
                 }
-                console.log({
-                    text: "row is full",
-                    gameboard: gameboard,
-                    newChildren: newChildren,
-                    boxes: boxes
-                })
+
                 this.clearRow(gameboard, y, newChildren, boxes);
+                this.setRowdown(gameboard, boxes);
+                this.updatePoints(rowFullCount);
             }
         }
         this.setAboveBoxesToOnlyDown(gameboard, lowestFullRow);
-        return rowFullCount;
+    }
+
+    setRowdown(gameboard, boxes){
+        for (let y = 0; y < Board_HEIGHT; y++) {
+            for (let x = 0; x < Board_WIDTH; x++) {
+            const cell = gameboard[x][y];
+            if(cell != null ){
+                cell.y++;
+            }
+            }
+        }
     }
 
     setAboveBoxesToOnlyDown(gameboard, yLowest) {
@@ -564,7 +555,6 @@ class RichardsMiniGame extends Component {
                 const cell = gameboard[x][y];
                 if (cell != null && cell.hitBottom) {
                     cell.onlyDown = true;
-                    console.log("setAboveBoxes to Only down");
                 }
             }
         }
@@ -573,14 +563,6 @@ class RichardsMiniGame extends Component {
     rowIsFull(gameboard, y) {
         for (let x = 0; x < Board_WIDTH; x++) {
             const cell = gameboard[x][y];
-
-            /*console.log({
-                text: "row is full",
-                cell: cell,
-                gameboard: gameboard,
-                y: y
-            })*/
-
             if (!(cell != null) || (cell != null && cell.hitBottom === false)) {
                 return false;
             }
@@ -620,11 +602,6 @@ class RichardsMiniGame extends Component {
             oldChild.hitBottom = newChild.hitBottom;
             oldChild.dir = newChild.dir;
             oldChild.onlyDown = newChild.onlyDown;
-            console.log({
-                text: "New Old Child",
-                oldChild: newChild,
-                newChild: oldChild
-            });
         }
     }
 
