@@ -5,12 +5,13 @@
   "homepage": "http://valeknappich.github.io/react-app",
   "dependencies": {
     "ajv": "^6.5.4",
+    "arrow-keys-react": "^1.0.6",
     "grommet": "^1.11.0",
     "grommet-css": "^1.6.0",
     "react": "^16.6.0",
     "react-dom": "^16.5.2",
     "react-keyboard-event-handler": "^1.3.1",
-    "react-scripts": "2.0.4",
+    "react-scripts": "2.0.4"
   },
   "scripts": {
     "start": "react-scripts start",
