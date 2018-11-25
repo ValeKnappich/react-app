@@ -389,13 +389,13 @@ class Container extends React.Component {
         let fieldOutput = []; // die ist das letzte, sprich das Ausgabearray
 
         for (let i = 0; i < FIELDS / 3; i++) {
-            arraybuilder1.push(<td className="tables">
+            arraybuilder1.push(<td key={i} className="tables">
                 {this.inputFields(i * 3)}
             </td>)
-            arraybuilder1.push(<td className="tables">
+            arraybuilder1.push(<td key={i+1} className="tables">
                 {this.inputFields(i * 3 + 1)}
             </td>)
-            arraybuilder1.push(<td className="tables">
+            arraybuilder1.push(<td key={i+2} className="tables">
                 {this.inputFields(i * 3 + 2)}
             </td>)
 
@@ -404,7 +404,7 @@ class Container extends React.Component {
         }
 
         //fieldOutput enthält nun das gesamte Spielfeld
-        fieldOutput.push(<table className="tables">{arraybuilder2}</table>);
+        fieldOutput.push(<table className="tables"><tbody>{arraybuilder2}</tbody></table>);
 
         //Zusammenbauen von den 3 Spieldmodi-Buttons + Resetbuttons zu einem Feld
         let ModeButtons = [];
